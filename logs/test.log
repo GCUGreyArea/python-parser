@@ -1,2 +1,2 @@
-{"name":"Barry Robinson","skils": {"current":["c++","Java","c"],"future":["python","AWS"]}}
-"name=Barry Robinson,ocupation=Lead Cyber Engineer,company=Northup Grumman"
+{"name":"Barry Robinson","ocupation":"Lead Cyber Engineer","satisfaction":"good"}
+name=Barry Robinson,job=Lead Cyber Engineer,expectation=chalanging,freeform=latitude 52.4862 longetude 1.8904

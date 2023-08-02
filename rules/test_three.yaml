@@ -1,0 +1,92 @@
+- id: bf1d64ad-9694-4317-b7a6-55e9a4915437
+  name: test rule
+  patterns: 
+    - id: 0b1db7a5-0308-4bfb-87e3-b2a48cee6b88
+      name: basic kv
+      type: regex
+      partition: root
+      pattern: '^(?P<kv>[\d\w ]+=[\d\w \.]+,{0,}.{0,})'
+      triggers:
+        - name: kv
+          format: kv
+          partition: basic kv
+    - id: 46975537-6a3c-444a-9784-ea3c1d7e25d3
+      name: json basic
+      type: regex
+      partition: root
+      pattern: ^(?P<json>{.*})$
+      triggers:
+        - name: json
+          format: json
+          partition: basic json
+    - id: f28a4fcc-32dd-4c4b-afd6-4aca3e4f5537
+      name: test partition
+      type: kv
+      partition: basic kv
+      pattern: 
+          .name: "Barry Robinson"
+          .job: "Lead Cyber Engineer"
+          .freeform: # must contain freeform
+      map:
+        .name: name
+        .job: ocupation
+        .expectation: expectation
+      triggers:
+        - name: '.freeform'
+          format: regex
+          partition: freeform
+    - id: ed395291-65d2-492c-afb8-d1b64599263c
+      name: freeform text
+      type: regex
+      partition: freeform
+      pattern: '^latitude (?P<latitude>\d+[\.]{0,}\d{0,}) longetude (?P<longetude>\d+[\.]{0,}[\d]{0,})'
+      map: 
+        latitude: latitude
+        longetude: longetude
+    - id: 451a6827-da96-466a-aa97-d73b5605a13f
+      name: simple json parser
+      type: json
+      partition: basic json
+      pattern: 
+        .name: 
+        .ocupation:
+      map:
+        .name: name
+        .ocupation: job
+        .satisfaction: chalange
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

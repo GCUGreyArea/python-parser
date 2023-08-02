@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: parse.py",
+            "type": "python",
+            "request": "launch",
+            "program": "parse.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "rules",
+                "logs"
+            ]
+        },
+        {
             "name": "Python: parser File",
             "type": "python",
             "request": "launch",
@@ -29,7 +41,8 @@
             "cwd": "${workspaceFolder}",
             "justMyCode": true,
             "args": [
-                "resources/framework_three/","{'name':'Barry Robinson','ocupation':'Lead Cyber Engineer','satisfaction':'good'}"
+                "resources/framework_three/",
+                "{'name':'Barry Robinson','ocupation':'Lead Cyber Engineer','satisfaction':'good'}"
             ]
         }
     ]
