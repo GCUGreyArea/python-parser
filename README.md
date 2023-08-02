@@ -4,6 +4,11 @@
 
 You can run the parsers against a defined set of `rules` and `messages` with the command `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`. Please note that this requires `jq` to be correctly installed in your system.
 
+
+## Unit tests 
+
+Unit tests can be run with the command `./test_parsers.py`
+
 ## Basic architecture 
 
 The parser breaks down a parsing problem into recognition and extraction phases, allowing one pattern to delegate ectraction of tokens to another. Put simply, a string that contains something like `name=Barry Robinson,status={"company":"Northrup Grumman","job":"Lead Cyber Engineer","opinion":"favourable"}` might be broken into 2 sepperat fragments based on format. 
