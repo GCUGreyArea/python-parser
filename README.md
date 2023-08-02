@@ -114,4 +114,4 @@ For more details about the parser please checkout the [parser design document](d
 1. Pre defined tokens with types instead of auto formating
 2. Implement `contains` logic `json` patterns i.e. `.development.languages[]
    contains c++` for the `json`
-   `{"development":"languages":["java","c","python","c++"]}`
+   `{"development":{"languages":["java","c","python","c++"]}}`
