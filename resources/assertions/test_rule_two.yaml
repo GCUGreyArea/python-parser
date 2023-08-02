@@ -1,0 +1,12 @@
+- id: e9e50fbc-f4bc-480b-b168-f1279ba559c2
+  name: test rule
+  patterns: 
+    - id: f9108c6b-a924-4dbc-a0df-583593e1bb5b
+      name: aws json
+      partition: root
+      pattern: '^aws: (?P<json>{.*})'
+      triggers:
+        - name: json
+          action: forward
+          format: json
+          partition: aws json

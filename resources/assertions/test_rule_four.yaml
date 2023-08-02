@@ -1,0 +1,12 @@
+- id: e9e50fbc-f4bc-480b-b168-f1279ba559c2
+  name: test rule
+  patterns: 
+    - id: 00d4c181-6105-49cd-8bd6-dd7006212e43
+      name: aws json
+      type: regex 
+      partition: root
+      triggers:
+        - name: json
+          action: forward
+          format: json
+          partition: aws json

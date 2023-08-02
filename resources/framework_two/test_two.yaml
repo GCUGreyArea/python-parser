@@ -1,0 +1,54 @@
+- id: bf1d64ad-9694-4317-b7a6-55e9a4915437
+  name: test rule
+  patterns: 
+    - id: f28a4fcc-32dd-4c4b-afd6-4aca3e4f5537
+      name: aws json
+      type: regex 
+      partition: root
+      pattern: '^(?P<json>{.*})'
+      triggers:
+        - name: json
+          format: regex
+          partition: aws regex
+    - id: eb4963b9-3fa5-4338-8a40-01a35fecc782
+      name: aws regex
+      type: regex
+      partition: aws regex
+      pattern: '^{"name":"(?P<name>[\w ]+)","satisfaction":"(?P<satisfaction>[\w ]+)"}'
+      map:
+        name: name
+        satisfaction: value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

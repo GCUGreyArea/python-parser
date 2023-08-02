@@ -1,0 +1,11 @@
+- id: eff28aed-6f88-4de6-915f-544ba57903ff
+  name: framework test rule one
+  patterns:
+    - id: d11d836d-5ab0-4b8b-948c-63d03a50d4b7
+      name: token pattern 
+      type: regex
+      partition: root
+      pattern: '^name: (?P<name>\w+) age: (?P<age>\d+)'
+      map:
+        name: name
+        age: age

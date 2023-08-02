@@ -1,0 +1,46 @@
+- id: e9e50fbc-f4bc-480b-b168-f1279ba559c2
+  name: test rule one
+  patterns: 
+    - id: 0248953f-7d46-42ea-af3d-4ce067075eff
+      name: aws json one
+      type: regex 
+      partition: root
+      pattern: '^aws: (?P<json>{.*})'
+      triggers:
+        - name: json
+          action: forward
+          format: json
+          partition: aws json
+    - id: 0b1db7a5-0308-4bfb-87e3-b2a48cee6b88
+      name: basic kv one
+      type: regex
+      pattern: '^(?P<kv>[\d\w ]+=[\d\w ]+,*(?:[\d\w ]+=[\d\w ]+)*,[\d\w ]+=[\d\w ]+)'
+      partition: root
+      triggers:
+        - name: kv
+          action: forward
+          format: kv
+          partition: basic kv
+- id: 898cfde0-70a3-407a-ac3c-251f5946a973
+  name: test rule two
+  patterns: 
+    - id: 4552667a-12c6-46c1-ac10-f949e0633f9a
+      name: aws json two
+      type: regex 
+      partition: root
+      pattern: '^aws: (?P<json>{.*})'
+      triggers:
+        - name: json
+          action: forward
+          format: json
+          partition: aws json
+    - id: 4a06182f-2abe-475d-a7d6-d071bd4377d0
+      name: basic kv two
+      type: regex
+      pattern: '^(?P<kv>[\d\w ]+=[\d\w ]+,*(?:[\d\w ]+=[\d\w ]+)*,[\d\w ]+=[\d\w ]+)'
+      partition: root
+      triggers:
+        - name: kv
+          action: forward
+          format: kv
+          partition: basic kv
