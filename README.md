@@ -1,5 +1,9 @@
 # parser
 
+## Basic operation 
+
+You can run the parsers agains a defined set of rules and messages with `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`. Please note that this requires `jq` to be correctly installed in your system.
+
 ## Basic architecture 
 
 The parser breaks down a parsing problem into recognition and extraction phases, allowing one pattern to delegate ectraction of tokens to another. Put simply, a string that contains something like `name=Barry Robinson,status={"company":"Northrup Grumman","job":"Lead Cyber Engineer","opinion":"favourable"}` might be broken into 2 sepperat fragments based on format. 
@@ -69,8 +73,6 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws: {
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
-
-You can run the parsers agains a defined set of rules and messages with `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`
 ## Note 
 
 1. Might not be maximally efficient
