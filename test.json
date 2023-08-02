@@ -1,0 +1,10 @@
+{
+    "development": {
+        "languages": [
+            "java",
+            "c",
+            "python",
+            "c++"
+        ]
+    }
+}
