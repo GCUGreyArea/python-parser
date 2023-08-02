@@ -2,7 +2,7 @@
 
 ## Basic operation 
 
-You can run the parsers agains a defined set of rules and messages with `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`. Please note that this requires `jq` to be correctly installed in your system.
+You can run the parsers against a defined set of `rules` and `messages` with the command `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`. Please note that this requires `jq` to be correctly installed in your system.
 
 ## Basic architecture 
 
