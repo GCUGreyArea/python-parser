@@ -69,6 +69,8 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws: {
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
+
+You can run the parsers agains a defined set of rules and messages with `./parse.py rules logs`. To get formated json output run `./parse.py rules logs | jq`
 ## Note 
 
 1. Might not be maximally efficient
