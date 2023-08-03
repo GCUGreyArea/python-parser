@@ -269,6 +269,6 @@ be like `AWS ReddShift` logs messages.
   format and direct the parser to perform the correct `actions`, i.e. to `map`
   to `tokens` or `trigger` further parsing.
 
-  ## Usefull linnks 
+## Usefull linnks 
 
   - [SIEM](https://www.sumologic.com/glossary/siem-log)
