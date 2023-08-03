@@ -52,7 +52,11 @@ Unit tests can be run with the command `./test_parsers.py`
 
 ## REST API
 
-The file `server.py` creates a very basic REST API that can be accessed on `127.0.0.1:5000/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
+The file `server.py` creates a very basic REST API that can be accessed on
+`127.0.0.1:5000/parser` using `POST`. With trhe server running, the command
+`curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber
+Engineer,expectation=Chalanging work,freeform=latitude 52.4862 longetude 1.8904'
+http://127.0.0.1:5000/parse | jq` will produce the output 
 
 ```json
 {
@@ -74,7 +78,8 @@ The file `server.py` creates a very basic REST API that can be accessed on `127.
 
 ## Running the docker 
 
-The docker files `server.dockerfile` and `docker-compose.yml` are supplied for containerisation of the flask server. To buid and run the server
+The docker files `server.dockerfile` and `docker-compose.yml` are supplied for
+containerisation of the flask server. To buid and run the server
 
 ```shell
 $ docker-compose build 
