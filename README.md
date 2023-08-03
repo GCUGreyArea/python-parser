@@ -14,7 +14,7 @@ Unit tests can be run with the command `./test_parsers.py`
 
 ## REST API
 
-The file `server.py` creates a very basic REST APPI that can be accessed on `127.0.0.1:500/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,fre
+The file `server.py` creates a very basic REST API that can be accessed on `127.0.0.1:5000/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,fre
 eform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
 
 ```shell
