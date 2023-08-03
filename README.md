@@ -206,12 +206,12 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
     2. A value of `.name: Value` means match only if the
        path exists and has the supplied value.
 2. Where a map directive is supplied, i.e. `.path: label` the value at `.path`
-   will be mapped to the `label` supplied IF IT EXISTS IN THE MESSAGE. Otherwise
-   it will be ignored. Its absence will not prevent the message from matching a rule
-   if a suitable rules exists.
+   will be mapped to the `label` supplied if the path exists in the parsed
+   message. Otherwise it will be ignored. It's absence will not prevent the
+   message from matching a rule if a suitable rules exists.
 3. If any sub pattern fails, the entire chain of patterns fails. 
     1. The parser will try to find another match.
-    2. If no new match can be found, the parsing actin fails 
+    2. If no new match can be found, the parsing action will fail. 
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
@@ -220,17 +220,18 @@ For more details about the parser please checkout the [parser design document](d
 The general idea is that a `partition` should not constain a large number of
 `patterns`. The basic architecture for recognising a `message` means that a top
 level `root` pattern should do the main work of recognising the `message` type,
-then forward the reevant `fragments` to partitions with some patterns in it to do
-extraction of values. The more patterns in a paratition, the less efficient the
-parser becomes, because the more patterns it needs to try. It's that simple.
+then forward the reevant `fragments` to partitions with some patterns in them to
+extract values. The more patterns in a paratition, the less efficient the parser
+becomes because it has to test more patterns. It's that simple.
 
 In genreal a rule should be considered a top level grouping of similar patterns
-that deals with a single message type. In the world of log messages that might
-be like `AWS ReddShift` logs messages. 
+that deals with a single message type. In the world of `SIEM` and log messages,
+that might be like `AWS ReddShift` logs messages. 
 
-## Note and other considerations 
+## Notes and other considerations 
 
-1. Might not be maximally efficient
+1. The current implementation is undoubtedly not as efficient as it could be.
+   Tjis was built as a learning excersize to understand ``python3`.
 2. The ability to express an `SIEM` `event` by using conditional logic. This
    would need to refer to token valules to create new values. See [Token based
    extensible message parser -
@@ -250,7 +251,7 @@ be like `AWS ReddShift` logs messages.
 7. Structured patterns are grossly inificient. 
 
 
-## Glossary of terms 
+## Glossary of terms and abriviations
 
 - **Message**: Some structured or unstructured text needing tokanisation
 - **Structured pattern**: A pattern for a structured format such as JSON or KV
@@ -271,7 +272,7 @@ be like `AWS ReddShift` logs messages.
   `partition`, along with the functionality to extract `fragments` from that
   format and direct the parser to perform the correct `actions`, i.e. to `map`
   to `tokens` or `trigger` further parsing.
-
+- **SIEM**: Security Information Event Management
 ## Usefull linnks 
 
   - [SIEM](https://www.sumologic.com/glossary/siem-log)
