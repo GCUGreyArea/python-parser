@@ -202,8 +202,8 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
        path exists and has the supplied value.
 2. Where a map directive is supplied, i.e. `.path: label` the value at `.path`
    will be mapped to the `label` supplied IF IT EXISTS IN THE MESSAGE. Otherwise
-   it will be ignored, but it will not prevednt the messate from matching a rule
-   if one exists.
+   it will be ignored. Its absence will not prevent the message from matching a rule
+   if a suitable rules exists.
 3. If any sub pattern fails, the entire chain of patterns fails. 
     1. The parser will try to find another match.
     2. If no new match can be found, the parsing actin fails 
