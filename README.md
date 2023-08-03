@@ -205,8 +205,8 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
    it will be ignored, but it will not prevednt the messate from matching a rule
    if one exists.
 3. If any sub pattern fails, the entire chain of patterns fails. 
-  1. The parser will try to find another match.
-  2. If no new match can be found, the parsing actin fails 
+    1. The parser will try to find another match.
+    2. If no new match can be found, the parsing actin fails 
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
