@@ -220,3 +220,6 @@ For more details about the parser please checkout the [parser design document](d
 2. Implement `contains` logic `json` patterns i.e. `.development.languages[]
    contains c++` for the `json`
    `{"development":{"languages":["java","c","python","c++"]}}`
+3. The server should be able to handle bach requests for parsing to be usefull.
+4. There better diagnostic tools through exceptions.
+5. There should be proper loging.
