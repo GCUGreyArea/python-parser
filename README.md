@@ -2,10 +2,48 @@
 
 ## Basic operation 
 
+NOTE: All python files are now under `app` so that the application can be neetly
+containerised.
+
 You can run the parsers against a defined set of `rules` and `messages` with the
 command `./parse.py rules logs`. To get formated json output run `./parse.py
 rules logs | jq`. Please note that this requires `jq` to be correctly installed
 in your system.
+
+This will currently generate the output 
+```json
+{
+  "result-0": {
+    "rule": "bf1d64ad-9694-4317-b7a6-55e9a4915437",
+    "pattern": [
+      "46975537-6a3c-444a-9784-ea3c1d7e25d3",
+      "451a6827-da96-466a-aa97-d73b5605a13f"
+    ],
+    "tokens": {
+      "name": "Barry Robinson",
+      "job": "Lead Cyber Engineer",
+      "chalange": "ok"
+    }
+  },
+  "result-1": {
+    "rule": "bf1d64ad-9694-4317-b7a6-55e9a4915437",
+    "pattern": [
+      "0b1db7a5-0308-4bfb-87e3-b2a48cee6b88",
+      "f28a4fcc-32dd-4c4b-afd6-4aca3e4f5537",
+      "ed395291-65d2-492c-afb8-d1b64599263c"
+    ],
+    "tokens": {
+      "latitude": 52.4862,
+      "longetude": 1.8904,
+      "name": "Barry Robinson",
+      "ocupation": "Lead Cyber Engineer",
+      "expectation": "chalanging",
+      "tag": "v1.0"
+    }
+  }
+}
+```
+
 
 ## Unit tests 
 
@@ -16,7 +54,7 @@ Unit tests can be run with the command `./test_parsers.py`
 
 The file `server.py` creates a very basic REST API that can be accessed on `127.0.0.1:5000/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
 
-```shell
+```json
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   453  100   331  100   122  36777  13555 --:--:-- --:--:-- --:--:-- 50333
