@@ -253,7 +253,7 @@ be like `AWS ReddShift` logs messages.
   acomplish the classification and extraction of `token` values from some
   string.
 - **Token**: A named tage for a value expressed in a pattern's `map` criteria.
-- **Triggers**: A directive that programs the parser to resubmit a fragment for
+- **Trigger**: A directive that programs the parser to resubmit a fragment for
   further parsing by the specified `engine`, using the specified `partition`.
 - **Engine**: A grouping of `patterns` attached to a specific `format` and
   `partition`, along with the functionality to extract `fragments` from that
