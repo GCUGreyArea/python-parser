@@ -14,12 +14,13 @@ Unit tests can be run with the command `./test_parsers.py`
 
 ## REST API
 
-The file `server.py` creates a very basic REST APPI that can be accessed on `127.0.0.1:500/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=chalanging,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
+The file `server.py` creates a very basic REST APPI that can be accessed on `127.0.0.1:500/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,fre
+eform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
 
 ```shell
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100   443  100   326  100   117   159k  58500 --:--:-- --:--:-- --:--:--  216k
+100   453  100   331  100   122  36777  13555 --:--:-- --:--:-- --:--:-- 50333
 {
   "rule": "bf1d64ad-9694-4317-b7a6-55e9a4915437",
   "pattern": [
@@ -32,10 +33,11 @@ The file `server.py` creates a very basic REST APPI that can be accessed on `127
     "longetude": 1.8904,
     "name": "Barry Robinson",
     "ocupation": "Lead Cyber Engineer",
-    "expectation": "chalanging"
+    "expectation": "Chalanging work"
   }
 }
 ```
+
 ## Basic architecture 
 
 The parser breaks down a parsing problem into recognition and extraction phases,
