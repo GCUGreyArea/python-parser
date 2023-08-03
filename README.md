@@ -59,7 +59,6 @@ server    |  * Running on all addresses (0.0.0.0)
 server    |  * Running on http://127.0.0.1:5000
 server    |  * Running on http://172.20.0.2:5000
 server    | Press CTRL+C to quit
-server    | 172.20.0.1 - - [03/Aug/2023 10:27:03] "POST /parse HTTP/1.1" 200 -
 ```
 
 You should now be able to access the server with `curl -X POST -d
