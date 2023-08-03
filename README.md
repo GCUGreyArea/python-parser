@@ -257,5 +257,5 @@ be like `AWS ReddShift` logs messages.
   further parsing by the specified `engine`, using the specified `partition`.
 - **Engine**: A grouping of `patterns` attached to a specific `format` and
   `partition`, along with the functionality to extract `fragments` from that
-  format and direct the parser to perform the correct `actions`, to `map` or
-  `trigger` new parsing.
+  format and direct the parser to perform the correct `actions`, i.e. to `map`
+  to `tokens` or `trigger` further parsing.
