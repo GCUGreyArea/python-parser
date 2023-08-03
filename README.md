@@ -7,11 +7,35 @@ command `./parse.py rules logs`. To get formated json output run `./parse.py
 rules logs | jq`. Please note that this requires `jq` to be correctly installed
 in your system.
 
-
 ## Unit tests 
 
 Unit tests can be run with the command `./test_parsers.py`
 
+
+## REST API
+
+The file `server.py` creates a very basic REST APPI that can be accessed on `127.0.0.1:500/parser` using `POST`. With trhe server running, the command `curl -X POST -d 'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=chalanging,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse | jq` will produce the output 
+
+```shell
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   443  100   326  100   117   159k  58500 --:--:-- --:--:-- --:--:--  216k
+{
+  "rule": "bf1d64ad-9694-4317-b7a6-55e9a4915437",
+  "pattern": [
+    "0b1db7a5-0308-4bfb-87e3-b2a48cee6b88",
+    "f28a4fcc-32dd-4c4b-afd6-4aca3e4f5537",
+    "ed395291-65d2-492c-afb8-d1b64599263c"
+  ],
+  "tokens": {
+    "latitude": 52.4862,
+    "longetude": 1.8904,
+    "name": "Barry Robinson",
+    "ocupation": "Lead Cyber Engineer",
+    "expectation": "chalanging"
+  }
+}
+```
 ## Basic architecture 
 
 The parser breaks down a parsing problem into recognition and extraction phases,

@@ -144,11 +144,13 @@ class KvEngine(Engine):
 
             if found == len(matches):
                 Ret = (ptn, FrgList)
+                # map tokens, if a path doesn't exist, continue
                 for path, act in action_map.items():
                     v = parser.contains(path)
-                    FrgList.append((v, act))
+                    if v is not None:
+                        FrgList.append((v, act))
                 break
-
+            # go to next match pattern
             found = 0
 
         return Ret
@@ -198,14 +200,19 @@ class JsonEngine(Engine):
                     break
 
             if found == len(matches):
+                # Map tokens. If we fail to find a path, just carry on
                 Ret = (ptn, FrgList)
                 for path, act in action_map.items():
-                    v = HDict[path]
-                    FrgList.append((v, act))
+                    try:
+                        v = HDict[path]
+                        FrgList.append((v, act))
+                    except KeyError:
+                        continue
                 break
-
+            # go to the next match pattern
             found = 0
 
+        # return whatever we matched
         return Ret
 
 
