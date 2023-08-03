@@ -4,8 +4,7 @@ WORKDIR /parser
 
 COPY . .
 
-RUN python3 -m venv venv
-RUN . venv/bin/activate 
+RUN pip install --upgrade pip
 RUN pip install pyyaml flask
 ENV PATH=/parser:$PATH
 
