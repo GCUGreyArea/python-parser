@@ -1,10 +1,9 @@
 FROM python:latest
 
-WORKDIR /parser
+WORKDIR /parser/app
 
-COPY . .
+COPY app/ .
 
-RUN pip install --upgrade pip
 RUN pip install pyyaml flask
 ENV PATH=/parser:$PATH
 
