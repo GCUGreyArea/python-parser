@@ -228,9 +228,10 @@ In genreal a rule should be considered a top level grouping of similar patterns
 that deals with a single message type. In the world of log messages that might
 be like `AWS ReddShift` logs messages. 
 
-## Note 
+## Note and other considerations 
 
 1. Might not be maximally efficient
+2. The ability to express an `SIEM` `event` by using conditional logic. This would need to refer to token valules to create new values. See [Token based extensible message parser - CheckPoint.yaml](https://github.com/GCUGreyArea/regex-parser/blob/f5347f39beee12cab84b9da09c056262c1c95899/rules/Checkpoint/CheckPoint.yaml#L39)
 
 ## Todo 
 
@@ -264,3 +265,7 @@ be like `AWS ReddShift` logs messages.
   `partition`, along with the functionality to extract `fragments` from that
   format and direct the parser to perform the correct `actions`, i.e. to `map`
   to `tokens` or `trigger` further parsing.
+
+  ## Usefull linnks 
+
+  - [SIEM](https://www.sumologic.com/glossary/siem-log)
