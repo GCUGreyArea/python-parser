@@ -92,17 +92,12 @@ An example rule file is presented beow
 
 With this rule the string `'aws: {"name":"Barry Robinson","value":"high"}'` is
 first matched by trhe pattern `f28a4fcc-32dd-4c4b-afd6-4aca3e4f5537` whose
-trigger is setup to forward the text extracted by the `json` capture group to to
+trigger is setup to forward the text extracted by the `json` capture group to 
 a `regex` partition called `aws regex`. 
 
 Pattern `eb4963b9-3fa5-4338-8a40-01a35fecc782` recives the text and parses
-`name` and `value`, which, due to the `map` statement is maped to the tokens
+`name` and `value`, which, due to the `map` statement, are maped to the tokens
 `name` and `value`
-
-If no rules with patterns for the message exists, an empty map is returned. 
-
-If a rule (or set of rules and patterns) exists that can parse the message, a
-map of `{'token name':'token value'}` is returned for the tokanized message. 
 
 The above rule, for the message `'aws: {"name":"Barry
 Robinson","satisfaction":"high"}'` yields the output `{"rule":
