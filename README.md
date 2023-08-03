@@ -37,6 +37,38 @@ The file `server.py` creates a very basic REST API that can be accessed on `127.
 }
 ```
 
+## Running the docker 
+
+The docker files `server.dockerfile` and `docker-compose.yml` are supplied for containerisation of the flask server. To buid and run the server
+
+```shell
+$ docker-compose build 
+$ docker-compose up 
+```
+
+You should see 
+
+```shell
+$ docker-compose up
+Recreating server ... done
+Attaching to server
+server    |  * Serving Flask app 'server'
+server    |  * Debug mode: off
+server    | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+server    |  * Running on all addresses (0.0.0.0)
+server    |  * Running on http://127.0.0.1:5000
+server    |  * Running on http://172.20.0.2:5000
+server    | Press CTRL+C to quit
+server    | 172.20.0.1 - - [03/Aug/2023 10:27:03] "POST /parse HTTP/1.1" 200 -
+```
+
+You should now be able to access the server with `curl -X POST -d
+'message=name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging
+work,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse |
+jq`. If you wish to add new rules to the containerised server you will need to
+update or add `YAML` rules to `rules`, then rebuild the container with
+`docker-compose build`.
+
 ## Basic architecture 
 
 The parser breaks down a parsing problem into recognition and extraction phases,
