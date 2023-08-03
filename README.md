@@ -101,11 +101,11 @@ You should now be able to access the server with `curl -X POST -d
 work,freeform=latitude 52.4862 longetude 1.8904'  http://127.0.0.1:5000/parse |
 jq`. If you wish to add new rules to the containerised server you will need to
 update or add to the existing `YAML` rules in `rules` (which is where the server 
-defaults to, then rebuild the container with `docker-compose build`.
+defaults to), then rebuild the container with `docker-compose build`.
 
 ## Basic architecture 
 
-## Simple explanation
+### Simple explanation
 
 The parser breaks down a parsing problem into recognition and extraction phases,
 allowing one pattern to delegate ectraction of tokens to another. Put simply, a
@@ -210,6 +210,19 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
+### Rules about partitions and patterns 
+
+The general idea is that a `partition` should not constain a large number of
+`patterns`. The basic architecture for recognising a `message` means that a top
+level `root` pattern should do the main work of recognising the `message` type,
+then forward the reevant `fragments` to partitions with some patterns in it to do
+extraction of values. The more patterns in a paratition, the less efficient the
+parser becomes, because the more patterns it needs to try. It's that simple.
+
+In genreal a rule should be considered a top level grouping of similar patterns
+that deals with a single message type. In the world of log messages that might
+be like `AWS ReddShift` logs messages. 
+
 ## Note 
 
 1. Might not be maximally efficient
@@ -223,3 +236,26 @@ For more details about the parser please checkout the [parser design document](d
 3. The server should be able to handle bach requests for parsing to be usefull.
 4. There better diagnostic tools through exceptions.
 5. There should be proper loging.
+
+
+## Glossary of terms 
+
+- **Message**: Some structured or unstructured text needing tokanisation
+- **Structured pattern**: A pattern for a structured format such as JSON or KV
+  expressed using JQ Paths. 
+- **Partition**: A named segmentation of parsing search space. Within the
+  current architecture `partitions` are attached to specific formats such that a
+  partition resolves to `name:format`, i.e. `basic kv:kv`. 
+- **Rules flie**: A rule, written in `YAML`, that groups together `patterns`,
+  along with their respective `map` and `trigger` directives to program the `the
+  framework` of the parser.
+- **Framework**: The code responsible for marsheling `parsing engines` to
+  acomplish the classification and extraction of `token` values from some
+  string.
+- **Token**: A named tage for a value expressed in a pattern's `map` criteria.
+- **Triggers**: A directive that programs the parser to resubmit a fragment for
+  further parsing by the specified `engine`, using the specified `partition`.
+- **Engine**: A grouping of `patterns` attached to a specific `format` and
+  `partition`, along with the functionality to extract `fragments` from that
+  format and direct the parser to perform the correct `actions`, to `map` or
+  `trigger` new parsing.
