@@ -31,6 +31,7 @@
         .name: name
         .job: ocupation
         .expectation: expectation
+        .tag: tag
       triggers:
         - name: '.freeform'
           format: regex
@@ -54,6 +55,7 @@
         .name: name
         .ocupation: job
         .satisfaction: chalange
+
 
       
 
