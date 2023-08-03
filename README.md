@@ -231,7 +231,10 @@ be like `AWS ReddShift` logs messages.
 ## Note and other considerations 
 
 1. Might not be maximally efficient
-2. The ability to express an `SIEM` `event` by using conditional logic. This would need to refer to token valules to create new values. See [Token based extensible message parser - CheckPoint.yaml](https://github.com/GCUGreyArea/regex-parser/blob/f5347f39beee12cab84b9da09c056262c1c95899/rules/Checkpoint/CheckPoint.yaml#L39)
+2. The ability to express an `SIEM` `event` by using conditional logic. This
+   would need to refer to token valules to create new values. See [Token based
+   extensible message parser -
+   CheckPoint.yaml](https://github.com/GCUGreyArea/regex-parser/blob/f5347f39beee12cab84b9da09c056262c1c95899/rules/Checkpoint/CheckPoint.yaml#L39)
 
 ## Todo 
 
