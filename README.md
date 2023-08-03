@@ -245,6 +245,9 @@ be like `AWS ReddShift` logs messages.
 3. The server should be able to handle bach requests for parsing to be usefull.
 4. There better diagnostic tools through exceptions.
 5. There should be proper loging.
+6. The parser could be made significantly more efficient by using Hyperscan for
+   Python to do regex matching.
+7. Structured patterns are grossly inificient. 
 
 
 ## Glossary of terms 
@@ -272,3 +275,6 @@ be like `AWS ReddShift` logs messages.
 ## Usefull linnks 
 
   - [SIEM](https://www.sumologic.com/glossary/siem-log)
+  - [Hyperscan python](https://python-hyperscan.readthedocs.io/en/latest/)
+  - [Hyperscan](https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-hyperscan.html)
+  - [Hyperscan git repo](https://github.com/intel/hyperscan)
