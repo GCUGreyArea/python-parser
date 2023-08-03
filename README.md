@@ -70,6 +70,8 @@ defaults to, then rebuild the container with `docker-compose build`.
 
 ## Basic architecture 
 
+## Simple explanation
+
 The parser breaks down a parsing problem into recognition and extraction phases,
 allowing one pattern to delegate ectraction of tokens to another. Put simply, a
 string that contains something like `name=Barry
@@ -153,6 +155,20 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
   }
 }
 ```
+
+### Rules about rules 
+
+1. Where a `path` is expressed in a `structured pattern` (JSON or KV) as part of
+  `pattern` the rule is telling the parser to ONLY match if those paths are
+  present with the values supplied 
+    1. A value of `.name:` means `match if the
+       parth is pressent` 
+    2. A value of `.name: Value` means match only if the
+       path exists and has the supplied value.
+2. Where a map directive is supplied, i.e. `.path: label` the value at `.path`
+   will be mapped to the `label` supplied IF IT EXISTS IN THE MESSAGE. Otherwise
+   it will be ignored, but it will not prevednt the messate from matching a rule
+   if one exists.
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 
