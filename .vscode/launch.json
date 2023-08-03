@@ -36,13 +36,13 @@
             "name": "Python: Framework",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/framework.py",
+            "program": "${workspaceFolder}/app/framework.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/app",
             "justMyCode": true,
             "args": [
-                "resources/framework_three/",
-                "{'name':'Barry Robinson','ocupation':'Lead Cyber Engineer','satisfaction':'good'}"
+                "rules",
+                "name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,tag=true,freeform=latitude 52.4862 longetude 1.8904"
             ]
         }
     ]
