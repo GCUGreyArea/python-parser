@@ -12,8 +12,10 @@ f = Framework('rules')
 def parse():
    msg = request.form.get('message')
 
-   (p,t) = f.parse_fragment(msg,'root:regex')
-   if p is not None:
+   Ret = f.parse_fragment(msg,'root:regex')
+
+   if Ret is not None:
+      (p,t) = Ret
       return f.generate_json_output(p,t)
     
    return '{"match":"none"}'
