@@ -204,6 +204,7 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
    will be mapped to the `label` supplied IF IT EXISTS IN THE MESSAGE. Otherwise
    it will be ignored, but it will not prevednt the messate from matching a rule
    if one exists.
+3. If any pattern fails, the whole rule will fail.
 
 For more details about the parser please checkout the [parser design document](docs/design.md).
 

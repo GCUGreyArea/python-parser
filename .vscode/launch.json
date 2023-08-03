@@ -42,7 +42,7 @@
             "justMyCode": true,
             "args": [
                 "rules",
-                "name=Barry Robinson,job=Lead Cyber Engineer,expectation=Chalanging work,tag=true,freeform=latitude 52.4862 longetude 1.8904"
+                "{\"name\":\"Barry Robinson\",\"Job\":\"lead Cyber Engineer\"}"
             ]
         }
     ]

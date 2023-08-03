@@ -116,7 +116,7 @@ class RegexEngine(Engine):
                 return (p, FrgList)
 
         # default to the empty list
-        return (None, [])
+        return None
 
 
 # engine for kv parsing
@@ -149,11 +149,11 @@ class KvEngine(Engine):
                     v = parser.contains(path)
                     if v is not None:
                         FrgList.append((v, act))
-                break
+                return Ret
             # go to next match pattern
             found = 0
 
-        return Ret
+        return None
 
     def print(self):
         super().print()
@@ -208,12 +208,12 @@ class JsonEngine(Engine):
                         FrgList.append((v, act))
                     except KeyError:
                         continue
-                break
+                return Ret
             # go to the next match pattern
             found = 0
 
         # return whatever we matched
-        return Ret
+        return None
 
 
 # Framework class to run parsers
@@ -286,11 +286,12 @@ class Framework:
                 f"Ilegal partition name {partition} sent to parse_fragment"
             )
 
-        (Ptn, FragList) = eng.parse(FragStr)
+        Ret = eng.parse(FragStr)
 
-        if Ptn is None and len(FragList) == 0:
+        if Ret is None:
             return None
 
+        (Ptn,FragList) = Ret
         tokens = {}
         ptnList = []
         ptnList.append(Ptn.uuid())
@@ -301,7 +302,8 @@ class Framework:
             else:
                 Ret = self.parse_fragment(frag, action.string())
                 if Ret is None:
-                    break
+                    return None
+                
                 (PtnList, res) = Ret
                 for p in PtnList:
                     ptnList.append(p)
