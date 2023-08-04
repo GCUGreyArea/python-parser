@@ -12,7 +12,12 @@ f = Framework('rules')
 def parse():
    msg = request.form.get('message')
 
-   Ret = f.parse_fragment(msg,'root:regex')
+   Ret = None
+
+   try: 
+      Ret = f.parse_fragment(msg,'root:regex')
+   except Exception:
+      app.logging.error('Exception thrown')
 
    if Ret is not None:
       (p,t) = Ret
@@ -22,4 +27,5 @@ def parse():
 
 if __name__ == '__main__':
    # https://pythonspeed.com/articles/docker-connection-refused/
+   app.logger.info('Starting server')
    app.run(host='0.0.0.0',port=5000)
