@@ -275,7 +275,7 @@ that might be like `AWS ReddShift` logs messages.
 - **SIEM**: Security Information Event Management
 ## Usefull linnks 
 
-  - [SIEM](https://www.sumologic.com/glossary/siem-log)
+  - [SIEM](https://en.wikipedia.org/wiki/Security_event_manager)
   - [Hyperscan python](https://python-hyperscan.readthedocs.io/en/latest/)
   - [Hyperscan](https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-hyperscan.html)
   - [Hyperscan git repo](https://github.com/intel/hyperscan)
