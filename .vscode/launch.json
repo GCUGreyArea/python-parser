@@ -36,14 +36,27 @@
             "name": "Python: Framework",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/app/framework.py",
+            "program": "${workspaceFolder}/parser/framework.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/app",
+            "cwd": "${workspaceFolder}/parser",
             "justMyCode": true,
             "args": [
-                "rules",
-                "{\"name\":\"Barry Robinson\",\"Job\":\"lead Cyber Engineer\"}"
+                "resources/event_rules",
+                "Aug  8 11:26:11 DESKTOP-TJR7EI0 kernel: [12379.724891] device veth2a73cae left promiscuous mode"
+            ]
+        },
+        {
+            "name": "Python: conversion",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/analyser/conversions.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/analyser",
+            "justMyCode": true,
+            "args": [
+                "rules"
             ]
         }
+
     ]
 }

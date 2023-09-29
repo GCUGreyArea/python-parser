@@ -2,17 +2,40 @@ version: '3.7'
 
 services:
 
-  python:
-    container_name: server
-    image: server
+  server:
+    container_name: parser
+    image: parser
     build:
       context: .
-      dockerfile: server.dockerfile
+      dockerfile: parser.dockerfile
     ports:
       - "5000:5000"
     networks:
       - server-network
-      
+    depends_on:
+      - mongodb
+
+  analyser:
+    container_name: analyser
+    image:  analyser
+    build:
+      context: .
+      dockerfile: analyser.dockerfile
+    ports:
+      - ":27017"
+    networks:
+      - server-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - server-network
+
 networks:
   server-network:
     driver: bridge

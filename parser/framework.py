@@ -278,12 +278,13 @@ class Framework:
 
         self._rule_by_pattern_id.update(RuleMap)
 
+    # @profile
     def parse_fragment(self, FragStr, partition):
         try:
             eng = self._engines[partition]
         except KeyError:
             raise ValueError(
-                f"Ilegal partition name {partition} sent to parse_fragment"
+                f"no patterns found in {partition} in parse_fragment"
             )
 
         Ret = eng.parse(FragStr)
@@ -350,15 +351,6 @@ class Framework:
     def generate_json_output(self, UuidList, parse_map):
         out = self.generate_output_map(UuidList, parse_map)
         return json.dumps(out)
-
-    def parse_messages(self, MsgList):
-        ResList = []
-        for msg in MsgList:
-            (PtnList, Tokens) = self.parse_fragment(msg, "root:regex")
-            ResList.append(self.generate_output(PtnList, Tokens))
-
-        return json.dumps
-
 
 def main(dir, message):
     f = Framework(dir)

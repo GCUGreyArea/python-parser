@@ -240,7 +240,14 @@ def get_rules(FName, UuidStore):
     Exceptions:
         VaueError: Thrown when a yaml rule file contains a bad entry
     """
-    YamlRules = load_yaml(FName)
+
+    YamlRule = None
+
+    try:
+        YamlRules = load_yaml(FName)
+    except ValueError as e:
+        print(f"Bad YAML {e}")
+        raise ValueError(f"invalid YAML file {FName}")
 
     ParsedRules = []
 

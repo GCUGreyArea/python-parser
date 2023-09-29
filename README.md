@@ -213,7 +213,7 @@ With `jq formating` the command `./framework.py resources/framework_two/ 'aws:
     1. The parser will try to find another match.
     2. If no new match can be found, the parsing action will fail. 
 
-For more details about the parser please checkout the [parser design document](docs/design.md).
+For more details about the parser please checkout the [parser design document](docs/parser-design.md).
 
 ### Rules about partitions and patterns 
 
