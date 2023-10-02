@@ -239,27 +239,35 @@ class Framework:
         self._partitions = {}
         self._rule_by_id = {}
         self._rule_by_pattern_id = {}
+        self._engines = {}
+
         for File in Files:
             RuleList = get_rules(File, self._uuid_store)
             for Rule in RuleList:
                 self._rule_by_id[Rule.uuid()] = Rule
 
             self._build_rule_by_pattern_id(RuleList)
+            part = build_partitions(RuleList)
+            for p,l in part.items():
+                try: 
+                    pl = self._partitions[p]
+                    pl.extend(l)
+                except KeyError:
+                    self._partitions[p] = l
 
-            Partition = build_partitions(RuleList)
-            self._partitions.update(Partition)
-
-        self._engines = self._build_parsing_engines()
+        self._engines.update(self._build_parsing_engines())
 
     def _build_parsing_engines(self):
         engines = {}
         for PartName, PartList in self._partitions.items():
             for Ptn in PartList:
+                eng = None
                 type = Ptn.type()
                 name = PartName + ":" + type
-                try:
+
+                try: 
                     eng = engines[name]
-                except KeyError:
+                except KeyError: 
                     if type == "regex":
                         eng = RegexEngine()
                     elif type == "kv":
@@ -377,9 +385,7 @@ def main(dir, message):
         (PtnList, Token) = ret
         out = f.generate_json_output(PtnList, Token)
         print(out)
-        print(f.to_string())
-
-    
+    # print(f.to_string())
 
 
 if __name__ == "__main__":

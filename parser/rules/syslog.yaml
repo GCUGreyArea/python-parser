@@ -1,0 +1,29 @@
+- id: b489a151-6e84-43ce-86d2-40e21791b26b
+  name: syslog rules 
+  patterns: 
+    - id: 19187f7a-e575-4729-a307-f7e050205bc6
+      name: if promiscuous mode 
+      type: regex 
+      partition: root
+      pattern: '^(?P<date_time>\w+  \d+ \d+:\d+:\d+) (?P<machine>[\w+ \-]+) (?P<component>\w+): \[\d+\.\d+\] device (?P<device>[\d\w]+) (?P<action>[\w ]+)$'
+      map:
+        date_time: date
+        machine: machine
+        component: component
+        action: action
+        device: device
+    - id: d910eda9-62a0-4209-afef-afd37e38ad58
+      name: access denied
+      type: regex 
+      partition: root
+      pattern: '^(?P<date_time>\w+  \d+ \d+:\d+:\d+) (?P<machine>[\w+ \-]+) (?P<component>\w+): \[\d+\.\d+\] file (?P<file>[\/\w]+) access (?P<state>\w+) user (?P<uname>\w+) level (?P<level>\d+)'
+      map:
+        date_time: date
+        machine: machine
+        component: component
+        file: file
+        uname: user
+        level: level
+        state: state
+
+

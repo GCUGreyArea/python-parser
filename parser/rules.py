@@ -129,9 +129,8 @@ class Pattern:
         )
 
     def to_string(self):
-        return "{ \"name\": \"" + self._name + "\", \"uuid\": \"" + self._uuid + "\", \"type\": \"" + self._type + "\", \"partition\": \"" + self._partition + "\"}"
+        return "{\"name\": \"" + self._name + "\", \"uuid\": \"" + self._uuid + "\", \"type\": \"" + self._type + "\", \"partition\": \"" + self._partition + "\"}"
         
-
 
 class RegexPattern(Pattern):
     def __init__(self, P, UuidStore):
@@ -196,6 +195,15 @@ class Rule:
         for ptn in self._patterns:
             ptn.print()
 
+    def to_string(self):
+        st = "{\"uuid\": \"" + self._uuid + "\",\"name\": \"" +  self._name +", \"patterns\": ["
+        for ptn in self._patterns:
+            if st[-1] != "[":
+                st += ","
+            st += ptn.to_string()
+        return st
+
+
 
 def load_yaml(FName):
     try:
@@ -256,7 +264,6 @@ def get_rules(FName, UuidStore):
     ParsedRules = []
 
     for YamlRule in YamlRules:
-        Patterns = []
         ID = None
         Name = None
         Ptns = None
@@ -283,24 +290,24 @@ def get_rules(FName, UuidStore):
 
 
 def build_partitions(Rules):
-    Partitions = {}
+    partitions = {}
     for Rule in Rules:
         for Ptn in Rule.patterns():
-            Part = Ptn.partition()
-            PtnList = []
+            part = Ptn.partition()
+            plist = []
             try:
-                PtnList = Partitions[Part]
+                plist = partitions[part]
             except KeyError:
-                Partitions[Part] = PtnList
+                partitions[part] = plist
 
-            if Part == "root" and Ptn.type() != "regex":
+            if part == "root" and Ptn.type() != "regex":
                 raise ValueError(
-                    f"Root partitoin can only contain regex patterns: {Ptn.uuid()}:{Ptn.type()}"
+                    f"Root partiton can only contain regex patterns: {Ptn.uuid()}:{Ptn.type()}"
                 )
 
-            PtnList.append(Ptn)
+            plist.append(Ptn)
 
-    return Partitions
+    return partitions
 
 
 def main(file):
