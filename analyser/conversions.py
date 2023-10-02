@@ -30,6 +30,7 @@ class Eval:
                 raise ValueError(f"evaluation rule must contain \"range\" and \"map\"")
     
     def exec(self,n):
+        print("Eval")
         for (low,high,map) in self._list:
             if n >= low:
                 if n <= high:
@@ -40,6 +41,7 @@ class Subs:
         self._map = map
 
     def exec(self,n):
+        print("substitute")
         try:
             return self._map[n]
         except KeyError:
@@ -50,6 +52,7 @@ class Refmat:
         self._to_type = t
 
     def exec(self,n):
+        print("reformating")
         if isinstance(n,str):
             if self._to_type == "int":
                 return int(n)
@@ -111,11 +114,14 @@ class Rule:
         return self._map_ids
     
     def remap(self,map):
+        print(f"remapping {map}")
         tkns = map['tokens']
         t = tkns[self._field]
         if self._regex is not None:
+            print(f"regex to match : {t}")
             m = self._regex.match(t)
             if m:
+                print("matched")
                 for name, index in self._regex.groupindex.items():
                     val = m.group(index)
                     try:
@@ -161,6 +167,8 @@ class Converter:
 
     def remap(self,msg):
         p = msg['pattern']
+        if p is not None:
+            print(f"found {p}")
         if isinstance(p,str):
             try:
                 rlist = self._rules[p]
@@ -176,7 +184,7 @@ class Converter:
                         r.remap(msg)
                 except KeyError:
                     pass
-
+        return msg
 
 def main(dir):
     print(f"reading drectory {dir}")

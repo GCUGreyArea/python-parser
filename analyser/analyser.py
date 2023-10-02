@@ -50,6 +50,7 @@ def process_new_messages(number):
     print(f"processing new messages: {number}")
     rec = db.find().sort('_id',-1).limit(number)
     for r in rec:
+        print(r)
         msg = cnv.remap(r)
         print(msg)
 
