@@ -83,6 +83,15 @@ class Engine:
         for p in self._pattern_by_uuid:
             p.print()
 
+    def to_string(self):
+        st = "{\"type\": \"" + self._type + "\", \"values\": ["
+        for _, p in self._pattern_by_uuid.items():
+            if st[-1] != "[":
+                st += ","
+            st += p.to_string()
+
+        return st + "]}"
+
 
 # Engine for regex parsing
 class RegexEngine(Engine):
@@ -283,16 +292,14 @@ class Framework:
         try:
             eng = self._engines[partition]
         except KeyError:
-            raise ValueError(
-                f"no patterns found in {partition} in parse_fragment"
-            )
+            raise ValueError(f"no patterns found in {partition} in parse_fragment")
 
         Ret = eng.parse(FragStr)
 
         if Ret is None:
             return None
 
-        (Ptn,FragList) = Ret
+        (Ptn, FragList) = Ret
         tokens = {}
         ptnList = []
         ptnList.append(Ptn.uuid())
@@ -304,7 +311,7 @@ class Framework:
                 Ret = self.parse_fragment(frag, action.string())
                 if Ret is None:
                     return None
-                
+
                 (PtnList, res) = Ret
                 for p in PtnList:
                     ptnList.append(p)
@@ -316,6 +323,16 @@ class Framework:
         print("engines:")
         for _, eng in self._engines.items():
             eng.print()
+
+    def to_string(self):
+        st = "["
+        for _, eng in self._engines.items():
+            if st != "[":
+                st = st + ","
+            st = st + eng.to_string()
+        
+
+        return st + "]"
 
     def generate_output_map(self, UuidList, parse_map):
         RuleMap = {}
@@ -352,6 +369,7 @@ class Framework:
         out = self.generate_output_map(UuidList, parse_map)
         return json.dumps(out)
 
+
 def main(dir, message):
     f = Framework(dir)
     ret = f.parse_fragment(message, "root:regex")
@@ -359,6 +377,9 @@ def main(dir, message):
         (PtnList, Token) = ret
         out = f.generate_json_output(PtnList, Token)
         print(out)
+        print(f.to_string())
+
+    
 
 
 if __name__ == "__main__":

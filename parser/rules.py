@@ -128,6 +128,10 @@ class Pattern:
             self._ptn,
         )
 
+    def to_string(self):
+        return "{ \"name\": \"" + self._name + "\", \"uuid\": \"" + self._uuid + "\", \"type\": \"" + self._type + "\", \"partition\": \"" + self._partition + "\"}"
+        
+
 
 class RegexPattern(Pattern):
     def __init__(self, P, UuidStore):

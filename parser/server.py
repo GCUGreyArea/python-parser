@@ -41,6 +41,11 @@ def parse():
     
    return '{"match":"none"}'
 
+@app.route('/show', methods=['GET'])
+def show():
+   print("show...")
+   return f.to_string()
+
 if __name__ == '__main__':
    # https://pythonspeed.com/articles/docker-connection-refused/
    print('Starting server')
