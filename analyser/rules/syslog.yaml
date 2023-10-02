@@ -29,6 +29,8 @@
       #  Store the output as
   - day: 
       reformat: int
+  update:
+    pattern: '%{1}/%{2} @ %{3}'
 - id: d910eda9-62a0-4209-afef-afd37e38ad58
   # map_fields:
   patterns: [11d83e62-4b21-4dd5-bc67-d56eab522686]

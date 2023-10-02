@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import yaml
+import copy
 
 # TODO: Fix this so it's global
 def load_yaml(FName):
@@ -41,7 +42,6 @@ class Subs:
         self._map = map
 
     def exec(self,n):
-        print("substitute")
         try:
             return self._map[n]
         except KeyError:
@@ -52,7 +52,6 @@ class Refmat:
         self._to_type = t
 
     def exec(self,n):
-        print("reformating")
         if isinstance(n,str):
             if self._to_type == "int":
                 return int(n)
@@ -63,16 +62,42 @@ class Refmat:
         
         return n
 
+class Update:
+    def __init__(self, ptn):
+        self._ptn = ptn
+
+    def make_string(self,values):
+        place = 0
+        st = copy.copy(self._ptn)
+        while place < len(values):
+            tag = "%{" + str(place+1) + "}"
+            v = ''
+            if isinstance(values[place],int):
+                v = str(values[place])
+            else:
+                v = values[place]
+            st = st.replace(tag,v)
+            place += 1
+
+        return st
+
+
 class Rule: 
     def __init__(self,map):
         self._uuid = map['id']
         self._map_ids = [] 
+        self._update = None
         
         for id in map['patterns']:
             self._map_ids.append(id)
         self._field = map['field']
         try:
             self._regex = re.compile(map['regex'])
+            try: 
+                update = map['update']
+                self._update = Update(update['pattern'])
+            except KeyError:
+                raise ValueError(f"regex rule must have an update section")
         except KeyError:
             self._regex = None
 
@@ -81,11 +106,11 @@ class Rule:
         for c in cnv:
             count = 0
             for field,action in c.items():
+                # This is a hack! There should only be one of these!
                 count += 1
-                if count > 1:
+                if count > 2:
                     raise ValueError(f"bad rule {self._uuid}")
-                
-                done = False
+
                 try: 
                     sub_map = action["substitute"]
                     self._cnv[field] = Subs(sub_map)
@@ -104,7 +129,6 @@ class Rule:
                     refmat = action["reformat"]
                     self._cnv[field] = Refmat(refmat)
                 except KeyError: 
-
                     raise ValueError(f"rule must contain either a \"substitute\", an \"evaluate\", or a \"reformat\" directive")
 
     def uuid(self):
@@ -114,21 +138,26 @@ class Rule:
         return self._map_ids
     
     def remap(self,map):
-        print(f"remapping {map}")
         tkns = map['tokens']
         t = tkns[self._field]
         if self._regex is not None:
-            print(f"regex to match : {t}")
             m = self._regex.match(t)
+            values = []
+            # collect the values for the updater
             if m:
-                print("matched")
                 for name, index in self._regex.groupindex.items():
+                    v = None
                     val = m.group(index)
                     try:
-                        tkns[name] = self._cnv[name].exec(val)
+                        v = self._cnv[name].exec(val)
                     except KeyError:
-                        tkns[name] = val
-                tkns.pop(self._field, None)
+                        v = val
+
+                    values.append(v)
+
+                # update the token value
+                print(f"values {values}")
+                tkns[self._field] = self._update.make_string(values)
         else:
             r = self._cnv[self._field] 
             tkns[self._field] = r.exec(t)
@@ -192,7 +221,7 @@ def main(dir):
     msg = {"rule": "b489a151-6e84-43ce-86d2-40e21791b26b", "pattern": "11d83e62-4b21-4dd5-bc67-d56eab522686", "tokens": {"date": "Jun  8 11:26:11", "machine": "DESKTOP-TJR7EI0", "component": "kernel", "file": "/var/logs/syslog", "state": "denied", "user": "barry", "level": 5}}
     
     print(f"msg 1: {msg}")
-    c.remap(msg)
+    msg = c.remap(msg)
     print(f"msg 2: {msg}")
 
 if __name__ == "__main__":
