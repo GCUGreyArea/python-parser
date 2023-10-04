@@ -18,7 +18,7 @@ def parse():
    meta = request.form.get('meta')
 
    mdict = json.loads(meta)
-   print(meta)
+   # print(meta)
 
    Ret = None
    try: 
