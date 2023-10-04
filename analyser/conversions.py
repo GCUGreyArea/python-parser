@@ -3,20 +3,9 @@
 import sys
 import os
 import re
-import yaml
 import copy
+from analyser_yaml import load_yaml
 
-# TODO: Fix this so it's global
-def load_yaml(FName):
-    try:
-        f = open(FName)
-        Yaml = yaml.load(f, Loader=yaml.FullLoader)
-    except FileExistsError:
-        raise ValueError(f"File {FName} does not exist")
-    finally:
-        f.close()
-
-    return Yaml
 
 class Eval:
     def __init__(self,list):
@@ -55,8 +44,7 @@ class Refmat:
         if isinstance(n,str):
             if self._to_type == "int":
                 return int(n)
-
-        if isinstance(n,int):
+        elif isinstance(n,int):
             if self._to_type == "str":
                 return str(n)
         
@@ -70,7 +58,7 @@ class Update:
         place = 0
         st = copy.copy(self._ptn)
         while place < len(values):
-            tag = "%{" + str(place+1) + "}"
+            tag = "$" + str(place+1)
             v = ''
             if isinstance(values[place],int):
                 v = str(values[place])
@@ -137,7 +125,12 @@ class Rule:
     def map_id(self):
         return self._map_ids
     
-    def remap(self,map):
+    # Rempa will take the token and, 
+    # if it is a compound token, use a regex 
+    # to break it down further then transform the 
+    # message text usign the transformation pattern 
+    # declared in the rules .YAML file
+    def reformat(self,map):
         tkns = map['tokens']
         t = tkns[self._field]
         if self._regex is not None:
@@ -194,7 +187,7 @@ class Converter:
                     self._rules[id] = l
 
 
-    def remap(self,msg):
+    def reformat(self,msg):
         p = msg['pattern']
         if p is not None:
             print(f"found {p}")
@@ -202,7 +195,7 @@ class Converter:
             try:
                 rlist = self._rules[p]
                 for r in rlist:
-                    r.remap(msg)
+                    r.reformat(msg)
             except KeyError:
                 pass
         else:
@@ -210,7 +203,7 @@ class Converter:
                 try: 
                     rlist = self._rules[ptn]
                     for r in rlist:
-                        r.remap(msg)
+                        r.reformat(msg)
                 except KeyError:
                     pass
         return msg
@@ -221,7 +214,7 @@ def main(dir):
     msg = {"rule": "b489a151-6e84-43ce-86d2-40e21791b26b", "pattern": "11d83e62-4b21-4dd5-bc67-d56eab522686", "tokens": {"date": "Jun  8 11:26:11", "machine": "DESKTOP-TJR7EI0", "component": "kernel", "file": "/var/logs/syslog", "state": "denied", "user": "barry", "level": 5}}
     
     print(f"msg 1: {msg}")
-    msg = c.remap(msg)
+    msg = c.reformat(msg)
     print(f"msg 2: {msg}")
 
 if __name__ == "__main__":
