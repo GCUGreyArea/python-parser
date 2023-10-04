@@ -1,0 +1,33 @@
+# meta data rules allow the assertion of states based on some condition. the
+# meta data is then placed into a mongodb database that can be querried by other
+# staements and is tagged with the uuid of the rule that generated the data. All
+# staements are exacuted sequentially and in order.
+# special values: 
+#     $NOW          = the current date and time as known by the analyser
+#     $TODAY        = any date time that happened today. A statement value == $TODAY will 
+#                     be evaluated as "the date and time happened within 24 hours of the current date time"
+#     meta_db.value = the path to a value in th mongodb meta data databse. The path follows jq sintax and 
+#                     start at meta_db but include all parts of the path.   
+- id: efdebf15-337f-491b-9c20-cf82da976a6b
+  # These are globally accessible tables that can be accessed by any staement
+  tables: 
+    - name: machines
+      values: 
+      - "DESKTOP-TJR7EI0" 
+      - "REMOTE-34"
+      - "SERVER-ONE"
+    - name: senistive_files
+      values: 
+        - "/home/*/.local-file.txt"
+        - "/etc/sensitive/bin/some-file.bin"
+        - "/usr/local/bin/drivers/*"
+  statements: 
+  - statement: >- 
+      if rule == b489a151-6e84-43ce-86d2-40e21791b26b 
+        and tokens.machine in table.machines 
+        and tokens.state ==    "denied access to \n\t some equipment"
+        and tokens.file    in   sensitive_files
+            then assert   meta_data.sensitive_action = 1 and meta_data.time_stamp = $NOW
+  - statement: >- 
+      if collect (meta_db.sensitive_action >= 1)    as     sensitive_actions 
+        and count meta_db.time_stamp == $TODAY    in    sensitive_actions
