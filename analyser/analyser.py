@@ -44,8 +44,9 @@ print("right at the start")
 
 # Setup the interface to our database
 client = MongoClient('mongodb://mongodb:27017')
-msg_db = client['msg_db']['messages']
-update_db = client['update']['messages']
+msg_db    = client['msg_db']['messages']
+update_db = client['msg_db']['updates']
+state_db  = client['msg_db']['status']
 cnv = Converter('rules')
 
 sleep(1)
