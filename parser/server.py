@@ -10,7 +10,6 @@ app = Flask(__name__)
 f = Framework('rules')
 client = MongoClient('mongodb://mongodb:27017')
 db = client['msg_db']['messages']
-# msg_db = db.msg_db
 
 @app.route('/parse', methods=['POST'])
 def parse():

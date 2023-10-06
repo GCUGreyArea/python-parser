@@ -8,12 +8,13 @@ import re
 class DuplicateUUID(Exception):
     pass
 
-
 class GlobalUuid:
+    '''A class to insure uniqueness of UUIDs provided to the system'''
     def __init__(self):
         self._map = {}
 
     def _valid_uuid(self, uuid):
+        '''ensure the uuid is in the right format'''
         Reg = r"^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$"
         if not re.match(Reg, uuid):
             return False
@@ -21,6 +22,7 @@ class GlobalUuid:
         return True
 
     def validate(self, uuid):
+        '''validate a uuid'''
         # Each UUID must be unknown
         try:
             self._map[uuid]
@@ -32,7 +34,7 @@ class GlobalUuid:
 
 
 class Pattern:
-    def __init__(self, P, UuidStore):
+    def __init__(self, P, uuid_store):
         uuid = None
         triggers = None
         map = None
@@ -46,7 +48,7 @@ class Pattern:
         except KeyError:
             raise ValueError(f"Pattern {P}  does not have an id")
 
-        if not UuidStore.validate(uuid):
+        if not uuid_store.validate(uuid):
             raise ValueError(f"Pattern uuid is invalid: {uuid}")
 
         try:
@@ -108,8 +110,8 @@ class Pattern:
     def map(self):
         return self._map
 
-    def mappings(self):
-        return self._mappings
+    # def mappings(self):\
+    #     return self._mappings
 
     def partition(self):
         return self._partition
