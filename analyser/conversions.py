@@ -8,6 +8,9 @@ from analyser_yaml import load_yaml
 
 
 class Eval:
+    '''
+        Class to encapsulate the evaluation of statements
+    '''
     def __init__(self,list):
         # has the format (low,high,value)
         self._list = []
@@ -17,7 +20,7 @@ class Eval:
                 m = map['map']
                 self._list.append((r[0],r[1],m))
             except KeyError as e:
-                raise ValueError(f"evaluation rule must contain \"range\" and \"map\"")
+                raise ValueError(f"evaluation rule must contain \"range\" and \"map\" :{e}")
     
     def exec(self,n):
         print("Eval")
@@ -27,16 +30,23 @@ class Eval:
                     return map
 
 class Subs:
+    '''
+        class to encapsulate substitutions
+    '''
     def __init__(self,map):
         self._map = map
 
     def exec(self,n):
+        ''' execute the substitution'''
         try:
             return self._map[n]
         except KeyError:
             raise ValueError(f"map does not contain {n}")
 
 class Refmat:
+    '''
+        class to encapsulate substitutions in messages
+    '''
     def __init__(self,t):
         self._to_type = t
 
@@ -117,9 +127,10 @@ class Rule:
                     refmat = action["reformat"]
                     self._cnv[field] = Refmat(refmat)
                 except KeyError: 
-                    raise ValueError(f"rule must contain either a \"substitute\", an \"evaluate\", or a \"reformat\" directive")
+                    raise ValueError("rule must contain either a \"substitute\", an \"evaluate\", or a \"reformat\" directive")
 
     def uuid(self):
+        '''return the object's unique identifier'''
         return self._uuid   
     
     def map_id(self):
