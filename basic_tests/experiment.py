@@ -249,8 +249,6 @@ def run_single_query(table,q):
     return l
 
 def main(json_fmat,st):
-    # print(st)
-    # print(json_fmat)
     (t,n,q,a) = parse(st)
 
     l = run_single_query(t,q)
@@ -264,8 +262,14 @@ def main(json_fmat,st):
             return json.dumps(map)
         return map
     else:
+        if json_fmat == 'json':
+            return json.dumps(l)
         return l
 
 if __name__ == "__main__":
-        ret = main(sys.argv[1], sys.argv[2])
+        ret = None
+        if len(sys.argv) == 3:
+            ret = main(sys.argv[1], sys.argv[2])
+        else:
+            ret= main('no',sys.argv[1])
         print(ret)
