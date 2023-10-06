@@ -46,6 +46,12 @@ This will currently generate the output
 
 ## Event language development 
 
+It is planned that the `MongDB` backend will drive the event engine through three datastores 
+
+1. `messages`: Received messages in their raw state 
+2. `updates`: Messages that have had data normalisation rules applied to them
+2. `status`: active status determined by event rules
+
 - [Basic MongoDB query language test](basic_tests/readme.md)
 
 ## Unit tests 
