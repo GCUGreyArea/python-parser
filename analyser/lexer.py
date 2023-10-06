@@ -15,6 +15,10 @@ tokens = (
     'FLOAT',
     'OBJECT',
     'EQUALS',
+    'PLUS_EQUALS',
+    'MINUS_EQUALS',
+    'MUL_EQUALS',
+    'DIV_EQUALS',
     'ADD',
     'SUBTRACT',
     'MULTIPLY',
@@ -38,9 +42,11 @@ reserved = {
    'else'       : 'ELSE',
    'contains'   : 'CONTAINS',
    'in'         : 'IS_IN',
+   'is'         : 'IS',
    'and'        : 'AND',
    'or'         : 'OR',
-   'assert'     : 'ASSERT'
+   'assert'     : 'ASSERT',
+   'like'       : 'LIKE'
 }
 
 # The statement has to differentiate between words in the 'reserved list and an
@@ -63,6 +69,10 @@ t_FLOAT = r'\d+\.\d+'
 t_INT = r'\d+'
 t_LESS_OR_EQUAL = r'<='
 t_GREATER_OR_EQUAL = r'>='
+t_PLUS_EQUALS = r'\+='
+t_MINUS_EQUALS = r'\-='
+t_MUL_EQUALS = r'\*='
+t_DIV_EQUALS = r'/='
 t_EQUALS = r'='
 t_SUBTRACT = r'-'
 t_MULTIPLY = r'\*'
@@ -72,7 +82,7 @@ t_IS_EQUAL_TO = r'=='
 t_IS_GREATER_THAN = r'>'
 t_IS_LESS_THAN = r'<'
 t_STRING = r'\"[^\"]*\"'
-t_VARIABLE = r'\$.+'
+t_VARIABLE = r'\$[A-Z]+'
 
 # Do nothing with white spaces
 t_ignore  = ' '
@@ -84,15 +94,21 @@ def t_error(t):
 
 
 # Test the lexer
-def main(st):
+def run_lexer(st):
     lexer = lex.lex()
     lexer.input(st)
+    tokens = []
     while True:
         tok = lexer.token()
         if not tok: 
             break      # No more input
         print(tok)
+        tokens.append(tok)
 
+    return tokens
+
+def main(st):
+    run_lexer(st)
 
 # but only if run from the command line
 if __name__ == '__main__':
