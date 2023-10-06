@@ -29,5 +29,4 @@
         and tokens.file    in   sensitive_files
             then assert   meta_data.sensitive_action = 1 and meta_data.time_stamp = $NOW
   - statement: >- 
-      if collect (meta_db.sensitive_action >= 1)    as     sensitive_actions 
-        and count meta_db.time_stamp == $TODAY    in    sensitive_actions
+      if meta_db.sensitive_action >= 1 and meta_db.time_stamp == $TODAY then assert state_db.sensitive_actions += 1
