@@ -1,4 +1,4 @@
-# basic MongoDB query language test 
+# Basic MongoDB query language test 
 
 THe `experiments.py` file expresses a simple experiment in formating a query so tha tthe resuls can be analysed. 
 
