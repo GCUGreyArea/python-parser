@@ -22,6 +22,14 @@ class RegexQuery:
 
     def generate(self):
         return {self._field : {"$regex": self._regex}}
+    
+
+class JSONQuery:
+    def __init__(self, q):
+        self._query = json.loads(q)
+
+    def generate(self):
+        return self._query
 
 class Query:
     def __init__(self,qlist):
@@ -78,6 +86,37 @@ def is_int(st):
     
     return False
 
+
+def get_json_query(st):
+    r = re.compile(R'^using (?P<table>[a-z]+) (?P<query>[a-z][a-z0-=9\_]+)\s+(?P<expression>\{\"[a-z\_]+\"\s*\:\s*.*})\s*(?P<aggregate>(aggregate)*)$')
+    m = r.match(st)
+    if m:
+        it = r.groupindex.items()
+        if len(it) < 3:
+            return None
+        
+        table = None
+        qname = None
+        qvalue = None
+        aggregate = None
+        for name, index in it:
+            val = m.group(index)
+            if table == None and name == 'table':
+                table = val
+            elif qname == None and name == 'query':
+                qname = val
+            elif qvalue == None and name == 'expression':
+                qvalue = val
+            elif aggregate == None and name == 'aggregate':
+                aggregate = val
+            else: 
+                print(f"bad query {st}")
+                return None
+
+        return (table,qname,JSONQuery(qvalue),aggregate)
+    
+    return None
+
 # This will be replaced with a proper parser
 # this is a development framework to define the language!
 def split_ignore_strings(st):
@@ -122,6 +161,14 @@ def split_ignore_strings(st):
 # Parse a string into a query that can be executed on the database
 # This will be replaced with a proper parsers at some point!
 def parse(st):
+    # check if this is a json query
+    ret = get_json_query(st)
+    if re is not None:
+        (table,query,q,aggregate) = ret
+        return (table,query,Query([q]),aggregate)
+
+    print('not a json query')
+    # otherwise parse it
     # query elements
     table = None
     query = None
@@ -133,7 +180,6 @@ def parse(st):
     # Note: the query string has already been mnormalised so that all spaces equate to 1 other than for 
     # strings? So this won't work for that! 
     l = split_ignore_strings(st)
-    # print(l)
     place = 0
     length = len(l)
     while place < length:
@@ -147,7 +193,7 @@ def parse(st):
                 agregate = True
                 return (table,query,Query(qlist),agregate)
             else:
-                raise ValueError('agregate can only be applied at the end of a query: "using" "table" "query name" query "agregate"')
+                raise ValueError('agregate can only be applied at the end of a query: "using" "table" "query name" query "aggregate"')
         obj = l[place]
         place+=1
         verb = l[place]
