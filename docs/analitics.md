@@ -45,6 +45,7 @@ triggered by new messages.
 <in>                    ::= 'in'
 <where>                 ::= 'where'
 <assert>                ::= 'assert'
+<using>                 ::= 'using'
 <int>                   ::= \d+
 <float>                 ::= \d+.\d+
 <string>                ::= '\"[^\"]\"
@@ -70,5 +71,40 @@ triggered by new messages.
 ```
 
 ```
-if count msg_db.status.breaches_warning where client_id == msg_db.status.client_id
+using messages clients collect "client_id";
+for all clients get client
+   using messages query1 {"client_id" : client, "ruler":"b489a151-6e84-43ce-86d2-40e21791b26b"} aggregate;
+   using status query2 {"client_id" : client};
+   if query1.tokens.notification.ilegal loggin attempt" >= 3 and
+      query1.tokens.file contains "/opt/dev/device"
+         then assert status.breach_attempt += 1;
+   if query1.tokens.machine is "DESKTOP-TJR7EI0" and
+      query2.breach_attempt > 3
+         assert status.allert = true
 ```
+
+The above example of an event rule that does very litle in the real world, but
+it should be remeberd that this is a toy system.
+
+
+## TODO 
+
+1. Make the rule compiler look ahead to conserve effort and only agregate or
+   render values that will be used instead of the complete map of returned
+   values. For instance in the above exampole query the first part of the query
+   collects all the client_id from the message database which gives all the
+   clients that have been effected byt some incident. For every client, the the
+   next two queries are run 
+
+```
+using messages query1 {"client_id" : client, "ruler":"b489a151-6e84-43ce-86d2-40e21791b26b"} aggregate;
+using status query2 {"client_id" : client};
+```
+
+The first part of this would aggregate all the values when the rest of the query
+only uses query1.tokens.notification.ilegal loggin attempt" and
+query1.tokens.machine, which are the only values that we need to collect
+(because no other value is accessed). The ideal way to achive this is to
+restrict the returned values from the query to the fields used by other parts of
+the query, but also only aggregate .tokens.notification.ilegal loggin attempt".
+

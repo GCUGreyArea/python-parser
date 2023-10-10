@@ -25,27 +25,63 @@ class RegexQuery:
     
 
 class JSONQuery:
-    def __init__(self, q):
+    def __init__(self, q,c):
         self._query = json.loads(q)
+        self._constraint = None
+        if c is not None:
+            self._constraint = json.loads(c)
 
-    def generate(self):
-        return self._query
+    def run_query(self,db,table):
+        tbl = db.lookup_table(table)
+        if tbl is not None:
+            if self._constraint is not None and self._query is not None:
+                return tbl.find(self._query,self._constraint)
+            elif self._query is not None:
+                return tbl.find(self._query)
+
+class DistinctQuery:
+    def __init__(self,field):
+        self._field = field
+
+    def run_query(self,db,table):
+        tbl = db.lookup_table(table)
+        if tbl is not None:
+            return tbl.distinct(self._field)
 
 class Query:
-    def __init__(self,qlist):
+    def __init__(self,qlist,clist):
         self._qlist = qlist
-        self._query = self._render()
+        self._clist = clist
+        self._query = self._render_query()
+        self._constraint = self._render_constraint()
 
-    def _render(self):
+    def _render_query(self):
         querry = {}
 
         for q in self._qlist:
             querry.update(q.generate())
 
         return querry
+    
+    def _render_constraint(self):
+        constraint = {}
+
+        for c in self._clist:
+            constraint.update(c.generate())
 
     def query(self):
         return self._query
+    
+    def run_query(self, tbl):
+        return tbl.find(self._query)
+    
+
+class ListValues:
+    def __init__(self,field):
+        self._field = field
+
+    def run_query(self,db,tbl):
+        table = db.lookup_table(tbl)
 
 # There should only ever be one of these. Probably need to make this a singleton object!  
 class DB:
@@ -56,22 +92,28 @@ class DB:
         self._status   = self._connection['msg_db']['status']
         self._lookup = {'messages' : self._messages,'updates':self._updates,'status':self._status}
 
-    def messages(self):
-        return self._messages
+    # def messages(self):
+    #     return self._messages
     
-    def updates(self):
-        return self._updates
+    # def updates(self):
+    #     return self._updates
 
-    def status(self):
-        return self._status
+    # def status(self):
+    #     return self._status
     
-    def run_query(self,table,query):
-        try:
-            tbl = self._lookup[table]
-            return tbl.find(query)
-        except:
-            print("failed badly")
-            return None
+    def lookup_table(self, tbl):
+        return self._lookup[tbl]
+    
+    # def run_query(self,table,query,constraint = None):
+    #     try:
+    #         tbl = self._lookup[table]
+    #         if constraint is not None:
+    #             return tbl.find(query,constraint)
+    #         else:
+    #             return tbl.find(query)
+    #     except:
+    #         print("failed badly")
+    #         return None
 
 # Call is_float first, then is_int otherwise you'll get a bad result!
 def is_float(st):
@@ -86,9 +128,15 @@ def is_int(st):
     
     return False
 
+# Get the value for a JSON query, this is the native format for a MongoDB query
+#  format 
+#     using <collection> <query name> <query> constrain <constraint> aggregate ;
+#     using <collection> <query name> <query> constrain <constraint> ;
+#     using <collection> <query name> <query> aggregate ;
+#     using <collection> <query name> <query> ; 
 
 def get_json_query(st):
-    r = re.compile(R'^using (?P<table>[a-z]+) (?P<query>[a-z][a-z0-=9\_]+)\s+(?P<expression>\{\"[a-z\_]+\"\s*\:\s*.*})\s*(?P<aggregate>(aggregate)*)$')
+    r = re.compile(R'^using (?P<table>[a-z]+) (?P<query>[a-z][a-z0-=9\_]+)\s+(?P<expression>\{\"[a-z\_]+\"\s*\:\s*.*})\s*(constraint (?P<constraint>\{\"[a-z\_]+\"\s*\:\s*.*}) (?P<aggregate>(aggregate)*))*\s*;$')
     m = r.match(st)
     if m:
         it = r.groupindex.items()
@@ -99,6 +147,7 @@ def get_json_query(st):
         qname = None
         qvalue = None
         aggregate = None
+        constraint = None
         for name, index in it:
             val = m.group(index)
             if table == None and name == 'table':
@@ -109,18 +158,20 @@ def get_json_query(st):
                 qvalue = val
             elif aggregate == None and name == 'aggregate':
                 aggregate = val
+            elif constraint == None and name == 'constraint':
+                constraint = val
             else: 
                 print(f"bad query {st}")
                 return None
 
-        return (table,qname,JSONQuery(qvalue),aggregate)
+        return (table,qname,JSONQuery(qvalue,constraint),aggregate)
     
     return None
 
 # This will be replaced with a proper parser
 # this is a development framework to define the language!
 def split_ignore_strings(st):
-    string = False
+    string = False 
     words = []
     word = ''
     for c in st:
@@ -163,11 +214,14 @@ def split_ignore_strings(st):
 def parse(st):
     # check if this is a json query
     ret = get_json_query(st)
-    if re is not None:
-        (table,query,q,aggregate) = ret
-        return (table,query,Query([q]),aggregate)
 
-    print('not a json query')
+    if ret is not None:
+        (table,query,q,aggregate) = ret
+        return (table,query,q,aggregate)
+
+
+    return None
+
     # otherwise parse it
     # query elements
     table = None
@@ -284,10 +338,11 @@ def aggregate_results(map,results):
 
     return results
 
+# We need to ad this function into Query so that things can be abstracted out!
 def run_single_query(table,q):
     l = []
     d =  DB()
-    res = d.run_query(table,q.query())
+    res = q.run_query(d,table)
     for m in res:
         m.pop('_id',None)
         l.append(m)
@@ -295,6 +350,19 @@ def run_single_query(table,q):
     return l
 
 def main(json_fmat,st):
+
+    # d = DB()
+
+    # l = []
+    # res = d.run_query('messages',{'client_id':3},{'_id':0,'rule':1,'tokens.file':1})
+    # for m in res:
+    #     l.append(m)
+
+    #     map = {'metadata':{}}
+    #     for r in l:
+    #         map = aggregate_results(r,map)
+    # return map
+
     (t,n,q,a) = parse(st)
 
     l = run_single_query(t,q)

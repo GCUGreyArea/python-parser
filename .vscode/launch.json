@@ -56,6 +56,18 @@
             "args": [
                 "rules"
             ]
+        },
+        {
+            "name": "Python: tst_json",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/basic_tests/parse_json_.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/basic_tests",
+            "justMyCode": true,
+            "args": [
+                "rules"
+            ]
         }
 
     ]
