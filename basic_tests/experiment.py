@@ -76,12 +76,12 @@ class Query:
         return tbl.find(self._query)
     
 
-class ListValues:
-    def __init__(self,field):
-        self._field = field
+# class ListValues:
+#     def __init__(self,field):
+#         self._field = field
 
-    def run_query(self,db,tbl):
-        table = db.lookup_table(tbl)
+#     def run_query(self,db,tbl):
+#         table = db.lookup_table(tbl)
 
 # There should only ever be one of these. Probably need to make this a singleton object!  
 class DB:
@@ -278,6 +278,8 @@ def parse(st):
     # ret = list of queries to run
     # agregate = agregate the results into a single map with metadata
     return (table,query,Query(qlist),agregate)
+
+
 
 # Used by format_results
 def _inc_metadata_for_value(label,value,meta):
