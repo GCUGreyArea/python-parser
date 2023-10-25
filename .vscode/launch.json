@@ -58,15 +58,29 @@
             ]
         },
         {
-            "name": "Python: tst_json",
+            "name": "Python: simple query one",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/basic_tests/parse_json_.py",
+            "program": "${workspaceFolder}/basic_tests/simple_query.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/basic_tests",
             "justMyCode": true,
             "args": [
-                "rules"
+                "json",
+                "using messages query1 {\"tokens.action\":{\"$regex\": \"ileagal.*\"}} ;"
+            ]
+        },
+        {
+            "name": "Python: simple query two",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/basic_tests/simple_query.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/basic_tests",
+            "justMyCode": true,
+            "args": [
+                "json",
+                "using messages query_1 sum tokens.machine ;"
             ]
         }
 

@@ -33,8 +33,7 @@ triggered by new messages.
 ```
 <msg_path>              ::= (:?rule|pattern|client_id)\b
 <field_path>            ::= tokens\.[a-zA-Z][a-z\_\.]*\b
-<db_status_path>        ::= msg_db\.status\.[a-z][a-z\_\.]*\b
-<db_path>               ::= msg_db\.(:?messages|updates|status)(:?\.[a-z\_]*)\b
+<collection>            ::= (:?messages|updates|status)\b
 <table_ref>             ::= table\.[a-z][a-z\_]*\b
 <if>                    ::= 'if'
 <then>                  ::= 'then'

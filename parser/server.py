@@ -4,12 +4,14 @@ from flask import Flask,request
 from framework import Framework
 from pymongo import MongoClient
 from bson.json_util import loads
+from simple_query import exec_statement
 import json
 
 app = Flask(__name__)
 f = Framework('rules')
 client = MongoClient('mongodb://mongodb:27017')
 db = client['msg_db']['messages']
+
 
 @app.route('/parse', methods=['POST'])
 def parse():
@@ -39,6 +41,12 @@ def parse():
       return Json
     
    return '{"match":"none"}'
+
+@app.route('/query',methods=['POST'])
+def query():
+   print("QUERY...")
+   query = request.form.get('query')
+   return exec_statement(query,'json')
 
 @app.route('/show', methods=['GET'])
 def show():

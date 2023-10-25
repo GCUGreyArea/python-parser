@@ -6,14 +6,10 @@ To use this you need to
 
 1. install MongoDB locally with `sudo apt install mongodb`
 2. run `./test_data/populate.py`
-2. run the commands
-    1. `./parse_json_strint.py json 'using messages query1 client_id is 3 aggregate' | jq`
-    2. `./parse_json_strint.py json 'using messages query1 client_id is 3 and tokens.machine is "DESKTOP-TJR7EI0" and tokens.action like "ileagal.*"' | jq`
-    3. `./parse_json_string.py json 'using messages query1 sum client_id' | jq`
 
 ## Example outputs 
 
-```
+<!-- ```
 ./experiment.py json 'using messages query1 client_id is 3 and tokens.machine is "DESKTOP-TJR7EI0" and tokens.action like "ileagal.*"' | jq
 [
   {
@@ -29,10 +25,10 @@ To use this you need to
     "client_id": 3
   }
 ]
-```
+``` -->
 
 ```
-./basic_tests/parse_json_strings.py json 'using messages query1 {"client_id": 3} aggregate' | jq
+./basic_tests/simple_query.py json 'using messages query1 {"client_id": 3} aggregate' | jq
 {
   "query1": {
     "metadata": {
@@ -86,7 +82,7 @@ To use this you need to
 ```
 
 ```
-./basic_tests/parse_json_strings.py json 'using messages query_1 sum tokens.machine ;' | jq
+./basic_tests/simple_query.py json 'using messages query_1 sum tokens.machine ;' | jq
 {
   "query_1": {
     "tokens.machine": [

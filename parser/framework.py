@@ -84,7 +84,7 @@ class Engine:
             p.print()
 
     def to_string(self):
-        st = "{\"type\": \"" + self._type + "\", \"values\": ["
+        st = '{"type": "' + self._type + '", "values": ['
         for _, p in self._pattern_by_uuid.items():
             if st[-1] != "[":
                 st += ","
@@ -248,8 +248,8 @@ class Framework:
 
             self._build_rule_by_pattern_id(RuleList)
             part = build_partitions(RuleList)
-            for p,l in part.items():
-                try: 
+            for p, l in part.items():
+                try:
                     pl = self._partitions[p]
                     pl.extend(l)
                 except KeyError:
@@ -265,9 +265,9 @@ class Framework:
                 type = Ptn.type()
                 name = PartName + ":" + type
 
-                try: 
+                try:
                     eng = engines[name]
-                except KeyError: 
+                except KeyError:
                     if type == "regex":
                         eng = RegexEngine()
                     elif type == "kv":
@@ -338,7 +338,6 @@ class Framework:
             if st != "[":
                 st = st + ","
             st = st + eng.to_string()
-        
 
         return st + "]"
 

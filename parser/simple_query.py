@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# This is an example for a basic parsing system for MongoDB queries for the
+# existing collections in msg_db 
 
 import json
 import sys
@@ -34,24 +36,25 @@ class DistinctQuery:
         tbl = db.lookup_table(self._table)
         return [{self._field : tbl.distinct(self._field)}]
 
-
 class DB:
-    def __init__(self):
-        self._connection = pymongo.MongoClient('mongodb://localhost:27017')
-        self._lookup = {
-            'messages' : self._connection['msg_db']['messages'],
-            'updates'  : self._connection['msg_db']['updates'],
-            'status'   : self._connection['msg_db']['status']
+    # We only ever want one of these!
+    _connection = pymongo.MongoClient('mongodb://mongodb:27017')
+    _lookup = {
+            'messages' : _connection['msg_db']['messages'],
+            'updates'  : _connection['msg_db']['updates'],
+            'status'   : _connection['msg_db']['status']
         }
-    
+
+    # just set the variables form the class
+    def __init__(self):
+        self._connection = DB._connection
+        self._lookup = DB._lookup
+
     def lookup_table(self, tbl):
         return self._lookup[tbl]
     
-    def run_query(self,query):
-        return query.run_query(self)
-
-
-# Parse out strings and JSON content and split them into a list of found objects
+# tokanise to a list of strings and JSON content and split them into a list of
+# found objects using a basic state machine
 def isolate_json_or_string(st):
     json_stack = []
     str_stack = []
@@ -64,7 +67,10 @@ def isolate_json_or_string(st):
             word += c
             ignore = False
             continue
-        elif c == '"' and len(json_stack) == 0:
+        elif c == '"' and len(json_stack) > 0:
+            word += c
+            continue
+        elif c == '"' and len(str_stack) == 0:
             if len(str_stack) == 0:
                 if word != '':
                     words.append(word)
@@ -77,18 +83,13 @@ def isolate_json_or_string(st):
             # ignore the next character whatever it is
             ignore = True
             continue
-        elif c == '"' and len(str_stack) > 0:
-            # end of a string
-            word += c
-            words.append(word)
-            word = ''
         elif (c == '{' or c == '['):
-            if word != '':
+            if word != '' and len(json_stack) == 0:
                 words.append(word)
                 word = ''
             json_stack.append(c)
             word += c
-        elif c == '}' or c == ']':
+        elif len(json_stack) > 0 and (c == '}' or c == ']'):
             json_stack.pop()
             word += c
             if len(json_stack) == 0:
@@ -106,16 +107,12 @@ def isolate_json_or_string(st):
 
     return words
 
-
+# parse the query string using a stae machine
 def parse_string(st):
     words = isolate_json_or_string(st)
-
-
-    # print(words)
     
     qname_regex = r'[a-z][a-z0-9\_]*'
-    exp_regex = r'\{\"[a-z\_\.\{\}]+\"\:.*\}'
-    # exp_regex = r'\{.*\}'
+    exp_regex = r'\{\"[a-z\_\.\{\}\[\]]+\"\:.*\}'
     collect_regex = r'messages|updates|status'
 
     collection = None
@@ -132,15 +129,13 @@ def parse_string(st):
             continue
         elif expect == 'collection':
             if re.match(collect_regex,word) is None:
-                print(f'unexpected token {word}')
-                break
+                raise ValueError(f'unexpected token {word}')
             collection = word
             expect = 'query'
             continue
         elif expect == 'query':
             if re.match(qname_regex,word) is None:
-                print(f'unexpected token {word}')
-                break
+                raise ValueError(f'unexpected token {word}')
             query = word
             expect = 'expression | sum'
         elif expect == 'expression | sum':
@@ -148,20 +143,21 @@ def parse_string(st):
                 expect = 'field'
                 continue
             elif re.match(exp_regex,word) is None:
-                print(f'unexpected token {word}')
-                break
+                raise ValueError(f'unexpected token {word}')
             expression = word
-            expect = 'constraint | aggregate'
-        elif expect == 'constraint | aggregate':
+            expect = 'constraint | aggregate | end'
+        elif expect == 'constraint | aggregate | end':
             if word == 'constraint':
                 expect = 'const_expre'
                 continue
             elif word == 'aggregate':    
                 aggregate = True
                 expect = 'end'
-            else:
-                print(f'unrecognised token {word}')
+                continue
+            elif word == ';':
                 break
+            else:
+                raise ValueError(f'unrecognised token {word}')
         elif expect == 'const_expre':
             constraint = word
             expect = 'aggregate | end'
@@ -171,8 +167,7 @@ def parse_string(st):
                 if aggregate == False:
                     aggregate = True
                 else: 
-                    print(f'aggregate has already been set: possition {pos}')
-                    break
+                    raise ValueError(f'aggregate has already been set: possition {pos}')
                 expect = 'end'
                 continue
             elif word == ';':
@@ -183,12 +178,13 @@ def parse_string(st):
             continue
         elif expect == 'end':
             if word != ';':
-                print(f'unexpected token: {word}')
-                break
-        else:
-            print(f'unexpected token {word}')
+                raise ValueError(f'unexpected token: {word}')
             break
+        else:
+            raise ValueError(f'unexpected token {word}')
 
+    # return the appropriate type of query as a python object that can be
+    # executed
     if expression != None:
         return (query,JSONQuery(collection,expression,constraint),aggregate)
     else:
@@ -201,8 +197,9 @@ def parse_string(st):
 #      of duplicates in the form {'metadata' : {'field.value' : count}}
 #   2. where there is a new value for an existing field, cheange the entry to a
 #      list and add all entries, in the form {'field' : [value1,value2]}
-#   3. flatten the map so that all values can be counted in meta as jq paths as {'.name1.name2.name3' : count}
-# def aggregate
+#   3. flatten the map so that all values can be counted in meta as jq paths as
+#      {'.name1.name2.name3' : count} this alows direct search for the value of
+#      '.name1.name2.name3' without having to travers a JSON object
 def _aggregate_results(meta_label,label,map,results):
     # value is result map so lable is guarenteed
     val = map[label]
@@ -259,6 +256,8 @@ def exec_statement(st,json_fmat):
     l = []
     res = q.run_query(db)
 
+    print(res)
+
     for r in res:
         # remove becaus ethis will not serialise to JSON
         r.pop("_id",None)
@@ -280,6 +279,9 @@ def exec_statement(st,json_fmat):
         return json.dumps(l)
         
     return l
+
+
+
 
 if __name__ == "__main__":
     if sys.argv[1] == 'json':
