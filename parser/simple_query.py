@@ -37,13 +37,8 @@ class DistinctQuery:
         return [{self._field : tbl.distinct(self._field)}]
 
 class DB:
-    def __init__(self, db_ref):
-        self._connection = db_ref
-        self._lookup = {
-            'messages' : self._connection['msg_db']['messages'],
-            'updates'  : self._connection['msg_db']['updates'],
-            'status'   : self._connection['msg_db']['status']
-        }
+    def __init__(self, cn_map):
+        self._lookup = cn_map
 
     def lookup_table(self, tbl):
         return self._lookup[tbl]
@@ -245,10 +240,10 @@ def aggregate_results(map,results):
 #     using <collection> <query name> <query> aggregate ;
 #     using <collection> <query name> <query> ; 
 
-def exec_statement(st,json_fmat, db_ref):
+def exec_statement(st,json_fmat, cn_map):
     (qname, q, aggregate) = parse_string(st)
 
-    db = DB(db_ref)
+    db = DB(cn_map)
     l = []
     res = q.run_query(db)
 
