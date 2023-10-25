@@ -9,8 +9,19 @@ import json
 
 app = Flask(__name__)
 f = Framework('rules')
+
+# db connections
 client = MongoClient('mongodb://mongodb:27017')
-db = client['msg_db']['messages']
+messages = client['msg_db']['messages']
+updates  = client['msg_db']['updates']
+status   = client['msg_db']['status']
+
+# Connection map
+cn_map = {
+   'messages' : messages,
+   'updates'  : updates,
+   'status'   : status
+}
 
 
 @app.route('/parse', methods=['POST'])
@@ -36,7 +47,7 @@ def parse():
 
       Json = json.dumps(Out)
       BJson = loads(Json)
-      db.insert_one(BJson)
+      messages.insert_one(BJson)
 
       return Json
     
@@ -46,7 +57,7 @@ def parse():
 def query():
    print("QUERY...")
    query = request.form.get('query')
-   return exec_statement(query,'json', client)
+   return exec_statement(query,'json', cn_map)
 
 @app.route('/show', methods=['GET'])
 def show():
