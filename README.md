@@ -2,15 +2,19 @@
 
 ## Basic operation 
 
-NOTE: All python files are now under `app` so that the application can be neetly
-containerised.
 
-You can run the parsers against a defined set of `rules` and `messages` with the
-command `./parse.py rules logs`. To get formated json output run `./parse.py
-rules logs | jq`. Please note that this requires `jq` to be correctly installed
-in your system.
+### Runing the parser stand alone
+
+**NOTE:** The app is designed to be containerised and run through a flask server
+using the REST API.
+
+You can run the parsers against a defined set of `rules` and `messages` in stand
+allone mode with the command `./parse.py rules logs`. To get formated json
+output run `./parse.py rules logs | jq`. Please note that this requires `jq` to
+be correctly installed in your system.
 
 This will currently generate the output 
+
 ```json
 {
   "result-0": {
@@ -46,18 +50,19 @@ This will currently generate the output
 
 ## Event language development 
 
-It is planned that the `MongDB` backend will drive the event engine through three datastores 
+Currently, `MongDB` is used as a backend to drive the event engine through three
+datastores. THis is not yet fully realised, but does have working features. 
 
 1. `messages`: Received messages in their raw state 
 2. `updates`: Messages that have had data normalisation rules applied to them
 2. `status`: active status determined by event rules
 
-- [Basic MongoDB query language test](basic_tests/readme.md)
+**Note:** [Basic MongoDB query language test](basic_tests/readme.md) can now be accessed
+  through the rest API
 
 ## Unit tests 
 
 Unit tests can be run with the command `./test_parsers.py`
-
 
 ## REST API
 
@@ -84,6 +89,112 @@ http://127.0.0.1:5000/parse | jq` will produce the output
   }
 }
 ```
+
+The query `curl -X POST -d 'query=using messages query1 {"client_id": 3}
+aggregate ;'  http://127.0.0.1:5000/query | jq` will result in the output
+
+```json
+{
+  "query1": {
+    "metadata": {
+      ".rule.b489a151-6e84-43ce-86d2-40e21791b26b": 3,
+      ".pattern.19187f7a-e575-4729-a307-f7e050205bc6": 3,
+      ".tokens.date.Aug  8 11:26:11": 1,
+      ".tokens.machine.DESKTOP-TJR7EI0": 3,
+      ".tokens.component.kernel driver": 1,
+      ".tokens.action.ileagal access request": 1,
+      ".tokens.file./opt/dev/device": 1,
+      ".client_id.3": 3,
+      ".tokens.date.Aug  8 12:31:25": 1,
+      ".tokens.notification.ilegal loggin attempt": 1,
+      ".tokens.port.223": 1,
+      ".tokens.src_ip_addr.172.16.0.12": 1,
+      ".tokens.target_ip_addr.192.168.20.31": 1,
+      ".tokens.user.vn_21": 1,
+      ".tokens.status.login attempt failed": 1,
+      ".tokens.date.Aug  8 12:25:11": 1,
+      ".tokens.component.user management": 1,
+      ".tokens.access.access granted": 1,
+      ".tokens.src_ip_addr.172.17.0.12": 1
+    },
+    ".rule": "b489a151-6e84-43ce-86d2-40e21791b26b",
+    ".pattern": "19187f7a-e575-4729-a307-f7e050205bc6",
+    ".tokens.date": [
+      "Aug  8 11:26:11",
+      "Aug  8 12:31:25",
+      "Aug  8 12:25:11"
+    ],
+    ".tokens.machine": "DESKTOP-TJR7EI0",
+    ".tokens.component": [
+      "kernel driver",
+      "user management"
+    ],
+    ".tokens.action": "ileagal access request",
+    ".tokens.file": "/opt/dev/device",
+    ".client_id": 3,
+    ".tokens.notification": "ilegal loggin attempt",
+    ".tokens.port": 223,
+    ".tokens.src_ip_addr": [
+      "172.16.0.12",
+      "172.17.0.12"
+    ],
+    ".tokens.target_ip_addr": "192.168.20.31",
+    ".tokens.user": "vn_21",
+    ".tokens.status": "login attempt failed",
+    ".tokens.access": "access granted"
+  }
+}
+```
+
+Running the query `curl -X POST -d 'query=using messages query1 {"client_id":3,"tokens.action":{"$regex": "ileagal.*"}} ;'  http://127.0.0.1:5000/query | jq` will return
+
+```json
+{
+  "query1": {
+    "rule": "b489a151-6e84-43ce-86d2-40e21791b26b",
+    "pattern": "19187f7a-e575-4729-a307-f7e050205bc6",
+    "tokens": {
+      "date": "Aug  8 11:26:11",
+      "machine": "DESKTOP-TJR7EI0",
+      "component": "kernel driver",
+      "action": "ileagal access request",
+      "file": "/opt/dev/device"
+    },
+    "client_id": 3
+  }
+}
+```
+
+The format of a query looks like this 
+
+```
+  using <collection> <query name> <query expression> constrain <constraint expression> aggregate ;
+  using <collection> <query name> <query expression> constrain <constraint expression> ;
+  using <collection> <query name> <query expression> aggregate ;
+  using <collection> <query name> <query expression> ; 
+```
+
+1. A query happens on a collection in the mongodb database. The availible
+   	collections are 
+	1. `messages` 2. `updates` 
+  	3. `status`
+2. a query has a name, such as `query_1` which (when this is done) can be used
+   in seperate queries
+3. The format of the `query expressions` is a `json` statement to search the
+   collection for
+	1. `{"client_id": 3}` will find all entries in the collection with the a
+  	   value for `client_id` of `3`
+  	2. `{\"tokens.action\":{\"$regex\": \"ileagal.*\"}}` will find all entries
+  	   where the path `tokens.action` satisfies the `regex` 
+4. a constraint statement is a json statement to tell the query which fields
+	sgould be retruned. The default is all 
+	1. `{"client_id":1, "rule":1}` would display only `client_id` and `rule`.
+	2. `{"client_id":0}` would not display `client_id`, but will display all
+    	other fields. 
+		1. Adding any field with `0` excludes it from the results
+    	2. adding any field with `1` includes it in the results and excludes all
+    	other fields
+
 
 ## Running the docker 
 
