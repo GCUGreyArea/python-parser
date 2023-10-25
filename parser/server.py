@@ -46,7 +46,7 @@ def parse():
 def query():
    print("QUERY...")
    query = request.form.get('query')
-   return exec_statement(query,'json')
+   return exec_statement(query,'json', client)
 
 @app.route('/show', methods=['GET'])
 def show():

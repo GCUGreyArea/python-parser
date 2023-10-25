@@ -37,18 +37,13 @@ class DistinctQuery:
         return [{self._field : tbl.distinct(self._field)}]
 
 class DB:
-    # We only ever want one of these!
-    _connection = pymongo.MongoClient('mongodb://mongodb:27017')
-    _lookup = {
-            'messages' : _connection['msg_db']['messages'],
-            'updates'  : _connection['msg_db']['updates'],
-            'status'   : _connection['msg_db']['status']
+    def __init__(self, db_ref):
+        self._connection = db_ref
+        self._lookup = {
+            'messages' : self._connection['msg_db']['messages'],
+            'updates'  : self._connection['msg_db']['updates'],
+            'status'   : self._connection['msg_db']['status']
         }
-
-    # just set the variables form the class
-    def __init__(self):
-        self._connection = DB._connection
-        self._lookup = DB._lookup
 
     def lookup_table(self, tbl):
         return self._lookup[tbl]
@@ -186,6 +181,7 @@ def parse_string(st):
     # return the appropriate type of query as a python object that can be
     # executed
     if expression != None:
+        print(f'expression : "{expression}", constraint : "{constraint}"')
         return (query,JSONQuery(collection,expression,constraint),aggregate)
     else:
         return (query,DistinctQuery(collection,field),False)
@@ -249,20 +245,21 @@ def aggregate_results(map,results):
 #     using <collection> <query name> <query> aggregate ;
 #     using <collection> <query name> <query> ; 
 
-def exec_statement(st,json_fmat):
+def exec_statement(st,json_fmat, db_ref):
     (qname, q, aggregate) = parse_string(st)
 
-    db = DB()
+    db = DB(db_ref)
     l = []
     res = q.run_query(db)
 
-    print(res)
+    # print(res)
 
     for r in res:
         # remove becaus ethis will not serialise to JSON
+        print(r)
         r.pop("_id",None)
         l.append(r)
-
+    
     if aggregate and len(l) > 0:
         map = {'metadata':{}}
         for r in l:
@@ -279,9 +276,6 @@ def exec_statement(st,json_fmat):
         return json.dumps(l)
         
     return l
-
-
-
 
 if __name__ == "__main__":
     if sys.argv[1] == 'json':
