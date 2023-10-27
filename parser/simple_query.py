@@ -102,7 +102,8 @@ def parse_string(st):
     words = isolate_json_or_string(st)
     
     qname_regex = r'[a-z][a-z0-9\_]*'
-    exp_regex = r'\{\"[a-z\_\.\{\}\[\]]+\"\:.*\}'
+    # we can yuse this form for json because words will allready be seperated out, so no word boundery problem
+    exp_regex = r'\{.*\}'
     collect_regex = r'messages|updates|status'
 
     collection = None
