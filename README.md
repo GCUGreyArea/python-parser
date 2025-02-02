@@ -1,4 +1,4 @@
-# Python parser
+8# Python parser
 
 ## Basic operation 
 
@@ -176,7 +176,8 @@ The format of a query looks like this
 
 1. A query happens on a collection in the mongodb database. The availible
    	collections are 
-	1. `messages` 2. `updates` 
+	  1. `messages` 
+   2. `updates` 
   	3. `status`
 2. a query has a name, such as `query_1` which (when this is done) can be used
    in seperate queries
