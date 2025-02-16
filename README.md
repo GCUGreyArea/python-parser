@@ -1,4 +1,4 @@
-8# Python parser
+# Python parser
 
 ## Basic operation 
 
